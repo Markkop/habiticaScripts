@@ -1,0 +1,14 @@
+{
+  "name": "customskills",
+  "version": "0.0.1",
+  "description": "Create new skills on Habitica by changing custom values",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Mark",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^24.8.0"
+  }
+}
