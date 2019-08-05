@@ -12,7 +12,7 @@
 // Not only %max values
 // Prettier notifications
 
-try {
+
   // All values changes are based on max value
   // eg. changeHp: "-10" => -10% Max HP
   const customSkills = [
@@ -103,12 +103,16 @@ try {
     return stats;
   };
 
-  const asyncRender = async () => {
-    console.log("CustomSkills script is running...");
+  export const asyncRender = async () => {
+
     createButtons(customSkills, putStats);
   };
-
+  
+try {
+  console.log("CustomSkills script is running...");
   asyncRender();
 } catch (err) {
   console.log(err);
 }
+
+
