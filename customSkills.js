@@ -13,53 +13,53 @@
 // Prettier notifications
 
 
-  // All values changes are based on max value
-  // eg. changeHp: "-10" => -10% Max HP
-  const customSkills = [
-    {
-      name: "Soul Pact",
-      changeHp: "-10",
-      changeExp: "-10",
-      changeMp: "+10"
-    },
-    {
-      name: "Test Mp Gain",
-      changeMp: "+1"
-    },
-    {
-      name: "Test Mp Loss",
-      changeMp: "-1"
-    }
-  ];
+// All values changes are based on max value
+// eg. changeHp: "-10" => -10% Max HP
+const customSkills = [
+  {
+    name: "Soul Pact",
+    changeHp: "-10",
+    changeExp: "-10",
+    changeMp: "+10"
+  },
+  {
+    name: "Test Mp Gain",
+    changeMp: "+1"
+  },
+  {
+    name: "Test Mp Loss",
+    changeMp: "-1"
+  }
+];
 
-  const createButtons = async (skills, onClickFunction) => {
-    const currentStats = await getStats();
-    let skillButtons = skills.map(skill => {
-      let btn = document.createElement("BUTTON");
+export const createButtons = async (skills, onClickFunction) => {
+  const currentStats = await getStats();
+  let skillButtons = skills.map(skill => {
+    let btn = document.createElement("BUTTON");
 
-      //console.log(/\%$/g.test(skill.changeHP));
+    //console.log(/\%$/g.test(skill.changeHP));
 
-      btn.innerHTML = `${skill.name}<br />
-                      HP:   ${skill.changeHp || "0"}% MAXHP<br />
-                      EXP:  ${skill.changeExp || "0"}% MAXEXP<br />
-                      MP:   ${skill.changeMp || "0"}% MAXMP<br />
-                      GP:   ${skill.changeGp || "0"}`;
+    btn.innerHTML = `${skill.name}<br />
+                    HP:   ${skill.changeHp || "0"}% MAXHP<br />
+                    EXP:  ${skill.changeExp || "0"}% MAXEXP<br />
+                    MP:   ${skill.changeMp || "0"}% MAXMP<br />
+                    GP:   ${skill.changeGp || "0"}`;
 
-      const newStats = {
-        "stats.hp": ((skill.changeHp || 0) / 100 + 1) * currentStats.hp,
-        "stats.mp": ((skill.changeMp || 0) / 100 + 1) * currentStats.mp,
-        "stats.exp": ((skill.changeExp || 0) / 100 + 1) * currentStats.exp,
-        "stats.gp": ((skill.changeGp || 0) / 100 + 1) * currentStats.gp
-      };
+    const newStats = {
+      "stats.hp": ((skill.changeHp || 0) / 100 + 1) * currentStats.hp,
+      "stats.mp": ((skill.changeMp || 0) / 100 + 1) * currentStats.mp,
+      "stats.exp": ((skill.changeExp || 0) / 100 + 1) * currentStats.exp,
+      "stats.gp": ((skill.changeGp || 0) / 100 + 1) * currentStats.gp
+    };
 
-      console.log(btn, newStats);
-      btn.addEventListener("click", () => onClickFunction(newStats));
-      return btn;
-    });
+    console.log(btn, newStats);
+    btn.addEventListener("click", () => onClickFunction(newStats));
+    return btn;
+  });
 
-    const spellsDiv = await document.getElementsByClassName("drawer-slider")[0];
-    skillButtons.forEach(button => spellsDiv.appendChild(button));
-  };
+  const spellsDiv = await document.getElementsByClassName("drawer-slider")[0];
+  skillButtons.forEach(button => spellsDiv.appendChild(button));
+};
 
   // const necroSkill = async stats => {
   //   const newStats = {
@@ -77,36 +77,47 @@
   //   location.reload();
   // };
 
-  const putStats = async newStats => {
-    //console.log("newStats: ", JSON.stringify(newStats));
-    let resp = await fetch("https://habitica.com/api/v3/user", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-user": "youruserid",
-        "x-api-key": "yourapitoken",
-        "x-client": "youruserid-Testing"
-      },
-      body: JSON.stringify(newStats)
-    });
-    //const data = await resp.json();
-    await console.log("Put Stats: ", await resp.json());
-  };
+const putStats = async newStats => {
+  //console.log("newStats: ", JSON.stringify(newStats));
+  let resp = await fetch("https://habitica.com/api/v3/user", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-user": "youruserid",
+      "x-api-key": "yourapitoken",
+      "x-client": "youruserid-Testing"
+    },
+    body: JSON.stringify(newStats)
+  });
+  //const data = await resp.json();
+  await console.log("Put Stats: ", await resp.json());
+};
 
-  const getStats = async () => {
-    const resp = await fetch(
-      "https://habitica.com/api/v3/members/40387571-91ee-489e-960f-278bf8fd503a"
-    );
-    const data = await resp.json();
-    const stats = data.data.stats;
-    //console.log("Stats via getStats ", stats);
-    return stats;
-  };
+export const getStats = async () => {
+  const resp = await fetch(
+    "https://habitica.com/api/v3/members/40387571-91ee-489e-960f-278bf8fd503a"
+  );
+  const data = await resp.json();
+  const stats = data.data.stats;
+  //console.log("Stats via getStats ", stats);
+  return stats;
+};
 
-  export const asyncRender = async () => {
+export const asyncRender = async () => {
 
-    createButtons(customSkills, putStats);
-  };
+  createButtons(customSkills, putStats);
+};
+
+export const hey = () => {
+  return "hey"
+}
+
+export const getMyHp = async () => {
+  console.log(hey())
+  const hp = await getStats()
+  
+  return hp
+}
   
 try {
   console.log("CustomSkills script is running...");
@@ -114,5 +125,3 @@ try {
 } catch (err) {
   console.log(err);
 }
-
-

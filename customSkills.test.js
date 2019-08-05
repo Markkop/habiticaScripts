@@ -1,5 +1,17 @@
-import asyncRender from './customSkills'
+import customSkills from './customSkills'
 
-test('returns api' , () => {
-    console.log(asyncRender)
+jest.mock('./customSkills', () => ({
+    // The line below allows to mock only some functions
+    ...(jest.requireActual('./customSkills.js')),
+    getStats: jest.fn(() => (
+        {
+            hp: 50
+        }
+    )),
+    hey: jest.fn(() => "rua")
+}))
+
+test('test' , () => {
+    console.log(customSkills)
+    console.log(customSkills.getMyHp())
 })
