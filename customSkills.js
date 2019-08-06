@@ -32,32 +32,41 @@ const customSkills = [
   }
 ];
 
-export const createButtons = async (currentStats, skills, onClickFunction) => {
-  let skillButtons = skills.map(skill => {
-    let btn = document.createElement("BUTTON");
+//console.log(/\%$/g.test(skill.changeHP));
+const createButtons = (skills, stats) => {
+  if (!skills || !stats) {
+    throw new Error("No input at createbuttons");
+  }
 
-    //console.log(/\%$/g.test(skill.changeHP));
-
+  return skills.map(skill => {
+    const btn = document.createElement("BUTTON");
     btn.innerHTML = `${skill.name}<br />
                     HP:   ${skill.changeHp || "0"}% MAXHP<br />
                     EXP:  ${skill.changeExp || "0"}% MAXEXP<br />
                     MP:   ${skill.changeMp || "0"}% MAXMP<br />
                     GP:   ${skill.changeGp || "0"}`;
 
-    const newStats = {
-      "stats.hp": ((skill.changeHp || 0) / 100 + 1) * currentStats.hp,
-      "stats.mp": ((skill.changeMp || 0) / 100 + 1) * currentStats.mp,
-      "stats.exp": ((skill.changeExp || 0) / 100 + 1) * currentStats.exp,
-      "stats.gp": ((skill.changeGp || 0) / 100 + 1) * currentStats.gp
-    };
-
-    console.log(btn, newStats);
-    btn.addEventListener("click", () => onClickFunction(newStats));
+    const newStats = changedStats(skill, stats);
+    addEvent(btn, putStats, newStats);
     return btn;
   });
+};
+const changedStats = (skill, currentStats) => {
+  return {
+    "stats.hp": ((skill.changeHp || 0) / 100 + 1) * currentStats.hp,
+    "stats.mp": ((skill.changeMp || 0) / 100 + 1) * currentStats.mp,
+    "stats.exp": ((skill.changeExp || 0) / 100 + 1) * currentStats.exp,
+    "stats.gp": ((skill.changeGp || 0) / 100 + 1) * currentStats.gp
+  };
+};
 
-  const spellsDiv = await document.getElementsByClassName("drawer-slider")[0];
-  skillButtons.forEach(button => spellsDiv.appendChild(button));
+const addEvent = (button, onClickFunction, newStats) => {
+  return button.addEventListener("click", () => onClickFunction(newStats));
+};
+
+const appendSkills = buttons => {
+  const spellsDiv = document.getElementsByClassName("drawer-slider")[0];
+  buttons.forEach(button => spellsDiv.appendChild(button));
 };
 
 // const necroSkill = async stats => {
@@ -82,9 +91,9 @@ const putStats = async newStats => {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      "x-api-user": "youruserid",
-      "x-api-key": "yourapitoken",
-      "x-client": "youruserid-Testing"
+      "x-api-user": "userid",
+      "x-api-key": "tokenapi",
+      "x-client": "userid-Testing"
     },
     body: JSON.stringify(newStats)
   });
@@ -102,34 +111,25 @@ const getStats = async () => {
   return stats;
 };
 
-const hey = () => {
-  return "hey";
-};
-
-const getMyHp = async () => {
-  console.log(hey());
-  const hp = await getStats();
-
-  return hp;
-};
-
 const main = async () => {
   try {
     console.log("CustomSkills script is running...");
-    const stats = await exportFuctions.getStats();
-    createButtons(stats, customSkills, putStats);
+    const stats = await getStats();
+    const buttons = createButtons(customSkills, stats);
+    appendSkills(buttons);
   } catch (err) {
     console.log("Caught:", err);
   }
 };
 
-const exportFuctions = {
-  main,
-  getStats
-};
-
-export default exportFuctions;
-
 // To make it work on Habitica, remove exports
 // and call main() below
 // (perhaps it doens't recognize ES6?)
+
+const exportFunctions = {
+  main,
+  addEvent,
+  createButtons
+};
+
+export default exportFunctions;
