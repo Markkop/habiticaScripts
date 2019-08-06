@@ -1,8 +1,7 @@
 import exportFuctions from "./customSkills";
 
-//putStats = jest.fn(() => {});
 exportFuctions.getStats = jest.fn(() => {
-  console.log("GetStats mock function");
+  //console.log("GetStats mock function");
   return {
     "stats.hp": 50,
     "stats.mp": 50,
@@ -11,10 +10,28 @@ exportFuctions.getStats = jest.fn(() => {
   };
 });
 
-test("test", () => {
-  exportFuctions.main();
-  expect(exportFuctions.getStats).toHaveBeenCalled();
-  expect;
+describe("createButtons", () => {
+  it("creates two buttons", () => {
+    const skills = [
+      {
+        name: "Skill1",
+        changeHp: "-10"
+      },
+      {
+        name: "Skill2",
+        changeHp: "-20"
+      }
+    ];
+    const stats = exportFuctions.getStats();
+    expect(exportFuctions.getStats).toHaveBeenCalled();
 
-  //console.log(customSkills);
+    expect(exportFuctions.createButtons(skills, stats)).toBeDefined();
+    expect(exportFuctions.createButtons(skills, stats)).toHaveLength(2);
+  });
+
+  it("it throws an error if no inputs are provided", () => {
+    expect(() => {
+      exportFuctions.createButtons();
+    }).toThrow();
+  });
 });
