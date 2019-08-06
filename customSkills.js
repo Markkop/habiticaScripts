@@ -102,25 +102,34 @@ const getStats = async () => {
   return stats;
 };
 
-export const hey = () => {
+const hey = () => {
   return "hey";
 };
 
-export const getMyHp = async () => {
+const getMyHp = async () => {
   console.log(hey());
   const hp = await getStats();
 
   return hp;
 };
 
-export const main = async () => {
+const main = async () => {
   try {
     console.log("CustomSkills script is running...");
-    const stats = await getStats();
+    const stats = await exportFuctions.getStats();
     createButtons(stats, customSkills, putStats);
   } catch (err) {
     console.log("Caught:", err);
   }
 };
 
-main();
+const exportFuctions = {
+  main,
+  getStats
+};
+
+export default exportFuctions;
+
+// To make it work on Habitica, remove exports
+// and call main() below
+// (perhaps it doens't recognize ES6?)
