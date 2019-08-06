@@ -1,0 +1,5 @@
+module.export document.fetch = jest.fn().mockImplementation(()) => {
+  return {
+    hp: 50
+  };
+});
