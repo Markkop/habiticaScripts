@@ -1,17 +1,24 @@
-import customSkills from './customSkills'
+import { main } from "./customSkills";
 
-jest.mock('./customSkills', () => ({
-    // The line below allows to mock only some functions
-    ...(jest.requireActual('./customSkills.js')),
-    getStats: jest.fn(() => (
-        {
-            hp: 50
-        }
-    )),
-    hey: jest.fn(() => "rua")
-}))
+jest.mock({
+  // The line below allows to mock only some functions
+  getStats: jest.fn(() => ({
+    hp: 50
+  })),
+  hey: jest.fn(() => "rua"),
+  putStats: jest.fn(() => {}),
+  fetch: jest.fn(() => {})
+});
 
-test('test' , () => {
-    console.log(customSkills)
-    console.log(customSkills.getMyHp())
-})
+//const { main } = jest.requireActual("./customSkills.js");
+
+test("test", () => {
+  const stats = {
+    "stats.hp": 50,
+    "stats.mp": 50,
+    "stats.exp": 50,
+    "stats.gp": 50
+  };
+  main();
+  console.log(customSkills);
+});
