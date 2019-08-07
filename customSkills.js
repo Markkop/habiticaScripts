@@ -1,19 +1,25 @@
 // ==UserScript==
 // @name        habiticaCustomSkills
-// @version     0.1
+// @version     1.0
 // @description Creates new skills to modify custom stats
 // @grant       none
 // @include     http*://habitica.com*
 // @run-at 	    document-idle
 // ==/UserScript==
 
-// To Do:
-// Styling
-// Not only %max values
-// Prettier notifications
+// Next updates:
+// - Create more testing to then being able to;
+// - Refactor the code;
+// - Give the option to choose multipliers or adders
+// - Create level requeriments
+// - Make stats such as INT modify reward values
+// - Make description as hover instead of just being a title (any ideas?)
+// - Allow multiple lines of skills / more than four skills
 
-// All values changes are based on max value
+// Values changes are based on max value
 // eg. changeHp: "-10" => -10% Max HP
+// *except gold being flat value
+// eg. changeGp: "+20" => +20 gold
 
 const customSkills = [
   {
@@ -66,7 +72,6 @@ const customSkills = [
   }
 ];
 
-//console.log(/\%$/g.test(skill.changeHP));
 const createButtons = (skills, stats) => {
   if (!skills || !stats) {
     throw new Error("No input at createbuttons");
@@ -101,10 +106,8 @@ const createButtons = (skills, stats) => {
     </div>`;
 
     divSpell.className = "col-12 col-md-3";
-
     const newStats = changedStats(skill, stats);
     addEvent(divSpell, putStats, newStats);
-
     return divSpell;
   });
 };
@@ -122,26 +125,20 @@ const addEvent = (button, onClickFunction, newStats) => {
 };
 
 const appendSkills = buttons => {
-  const div = document.createElement("div");
-  div.className = "row newSpells";
-
-  buttons.forEach(button => div.appendChild(button));
-
   const spellContainer = document.getElementsByClassName(
     "container spell-container"
   )[0];
-
   if (!spellContainer) {
-    console.log(
-      `spellContainer is ${spellContainer}, maybe spells weren't loaded yet`
-    );
+    alert(`The spell cointainer was not found. Try refreshing the page.`);
   }
 
+  const div = document.createElement("div");
+  div.className = "row newSpells";
+  buttons.forEach(button => div.appendChild(button));
   spellContainer.appendChild(div);
 };
 
 const putStats = async newStats => {
-  //console.log("newStats: ", JSON.stringify(newStats));
   let resp = await fetch("https://habitica.com/api/v3/user", {
     method: "PUT",
     headers: {
@@ -152,9 +149,8 @@ const putStats = async newStats => {
     },
     body: JSON.stringify(newStats)
   });
-  //const data = await resp.json();
   document.getElementsByClassName("top-menu-icon svg-icon")[5].click();
-  await console.log("Put Stats: ", await resp.json());
+  console.log("The following stats were updated: ", await resp.json());
 };
 
 const getStats = async () => {
@@ -163,7 +159,6 @@ const getStats = async () => {
   );
   const data = await resp.json();
   const stats = data.data.stats;
-  //console.log("Stats via getStats ", stats);
   return stats;
 };
 
