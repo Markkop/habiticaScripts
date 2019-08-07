@@ -11,5 +11,7 @@ It should be working
 ## How to Test and Develop  
   
 Access root folder (the same as package.json)  
-Run npm install
-Run npm test
+Run npm install  
+Run npm test  
+  
+<img src="https://i.imgur.com/Wc8WAjC.png"/>
