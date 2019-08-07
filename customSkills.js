@@ -18,17 +18,36 @@
 const customSkills = [
   {
     name: "Soul Pact",
-    changeHp: "-10",
-    changeExp: "-10",
-    changeMp: "+10"
+    imgSrc:
+      "https://gamepedia.cursecdn.com/wizardoflegend_gamepedia_en/thumb/1/11/Raging_Inferno.png/128px-Raging_Inferno.png",
+    multiplier: {
+      hp: "-10",
+      mp: "-10",
+      exp: "+10",
+      gp: "0"
+    }
   },
   {
     name: "Test Mp Gain",
-    changeMp: "+1"
+    imgSrc:
+      "https://gamepedia.cursecdn.com/wizardoflegend_gamepedia_en/thumb/1/11/Raging_Inferno.png/128px-Raging_Inferno.png",
+    multiplier: {
+      hp: "0",
+      mp: "+1",
+      exp: "0",
+      gp: "0"
+    }
   },
   {
     name: "Test Mp Loss",
-    changeMp: "-1"
+    imgSrc:
+      "https://gamepedia.cursecdn.com/wizardoflegend_gamepedia_en/thumb/1/11/Raging_Inferno.png/128px-Raging_Inferno.png",
+    multiplier: {
+      hp: "0",
+      mp: "-1",
+      exp: "0",
+      gp: "0"
+    }
   }
 ];
 
@@ -39,24 +58,38 @@ const createButtons = (skills, stats) => {
   }
 
   return skills.map(skill => {
-    const btn = document.createElement("BUTTON");
-    btn.innerHTML = `${skill.name}<br />
-                    HP:   ${skill.changeHp || "0"}% MAXHP<br />
-                    EXP:  ${skill.changeExp || "0"}% MAXEXP<br />
-                    MP:   ${skill.changeMp || "0"}% MAXMP<br />
-                    GP:   ${skill.changeGp || "0"}`;
+    console.log(skill);
+    const divSpell = document.createElement("div");
+    const style = "width: 40px";
+
+    const divsCosts = Object.keys(skill.multiplier)
+      .filter(cost => skill.multiplier[cost] < 0)
+      .reduce((str, cost) => {
+        return str.concat(
+          `<div data-v-d5085df8="" class="mana-text" style="padding-top: 0"><div data-v-d5085df8="" class="svg-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path fill="#2995CD" d="M22 15l-10 9-10-9L12 0z"></path><path fill="#50B5E9" d="M4.6 14.7l7.4-3v9.6z"></path><path fill="#1F709A" d="M12 11.7l7.4 3-7.4 6.6z" opacity=".25"></path><path fill="#FFF" d="M12 11.7V3.6l7.4 11.1z" opacity=".25"></path><path fill="#FFF" d="M4.6 14.7L12 3.6v8.1z" opacity=".5"></path><path fill="#FFF" d="M7.2 14.3L12 7.2l4.8 7.1-4.8 4.3z" opacity=".5"></path></g></svg></div><div data-v-d5085df8="">${
+            skill.multiplier[cost]
+          }%</div></div>`
+        );
+      }, "");
+
+    divSpell.innerHTML = `<div data-v-d5085df8="" class="spell col-12 row"><div data-v-d5085df8="" class="col-8 details"><a data-v-d5085df8="" class=""></a><div style="display: inline-block; width: 40px; height: 40px" class="img shop-sprite item-img"><img width="35" src="${
+      skill.imgSrc
+    }" /></div><span data-v-d5085df8="" class="title">${
+      skill.name
+    }</span></div><div data-v-d5085df8="" style="display: flex; flex-direction: column; justify-content: center" class="col-4 mana">${divsCosts}</div></div>`;
+    divSpell.className = "col-12 col-md-3";
 
     const newStats = changedStats(skill, stats);
-    addEvent(btn, putStats, newStats);
-    return btn;
+    addEvent(divSpell, putStats, newStats);
+    return divSpell;
   });
 };
 const changedStats = (skill, currentStats) => {
   return {
-    "stats.hp": ((skill.changeHp || 0) / 100 + 1) * currentStats.hp,
-    "stats.mp": ((skill.changeMp || 0) / 100 + 1) * currentStats.mp,
-    "stats.exp": ((skill.changeExp || 0) / 100 + 1) * currentStats.exp,
-    "stats.gp": ((skill.changeGp || 0) / 100 + 1) * currentStats.gp
+    "stats.hp": ((skill.multiplier.hp || 0) / 100 + 1) * currentStats.hp,
+    "stats.mp": ((skill.multiplier.mp || 0) / 100 + 1) * currentStats.mp,
+    "stats.exp": ((skill.multiplier.exp || 0) / 100 + 1) * currentStats.exp,
+    "stats.gp": ((skill.multiplier.gp || 0) / 100 + 1) * currentStats.gp
   };
 };
 
@@ -65,25 +98,16 @@ const addEvent = (button, onClickFunction, newStats) => {
 };
 
 const appendSkills = buttons => {
-  const spellsDiv = document.getElementsByClassName("drawer-slider")[0];
-  buttons.forEach(button => spellsDiv.appendChild(button));
-};
+  const div = document.createElement("div");
+  div.className = "row newSpells";
 
-// const necroSkill = async stats => {
-//   const newStats = {
-//     "stats.hp": stats.hp * 0.5,
-//     "stats.mp": stats.mp * 1.1,
-//     "stats.exp": stats.exp * 0.5
-//   };
-//   console.log(newStats);
-//   console.log(await putStats(newStats));
-//   alert(`Necromicon usado.\n
-//       Você perde ${Math.round(
-//         newStats["stats.hp"] - stats.hp
-//       )} HP, ${Math.round(newStats["stats.exp"] - stats.exp)} EXP\n
-//       Você ganha ${Math.round(newStats["stats.mp"] - stats.mp)} MP`);
-//   location.reload();
-// };
+  buttons.forEach(button => div.appendChild(button));
+
+  const spellContainer = document.getElementsByClassName(
+    "container spell-container"
+  )[0];
+  spellContainer.appendChild(div);
+};
 
 const putStats = async newStats => {
   //console.log("newStats: ", JSON.stringify(newStats));
@@ -122,14 +146,14 @@ const main = async () => {
   }
 };
 
-// To make it work on Habitica, remove exports
-// and call main() below
-// (perhaps it doens't recognize ES6?)
+// Uncomment below to use it on Greasemonkey
+main();
 
-const exportFunctions = {
-  main,
-  addEvent,
-  createButtons
-};
+// Uncomment below to allow testing
+// const exportFunctions = {
+//   main,
+//   addEvent,
+//   createButtons
+// };
 
-export default exportFunctions;
+// export default exportFunctions;
