@@ -14,12 +14,25 @@ describe("createButtons", () => {
   it("creates two buttons", () => {
     const skills = [
       {
-        name: "Skill1",
-        changeHp: "-10"
+        name: "Soul Pact",
+        imgSrc:
+          "https://www.pngix.com/pngfile/middle/48-486388_spell-book-icon-spellbook-icon-hd-png-download.png",
+        multiplier: {
+          hp: "-10",
+          mp: "+10",
+          exp: "-10",
+          gp: "0"
+        }
       },
       {
-        name: "Skill2",
-        changeHp: "-20"
+        name: "Midas Touch",
+        imgSrc: "http://pixeljoint.com/files/icons/goldbar.png",
+        multiplier: {
+          hp: "0",
+          mp: "-20",
+          exp: "-10",
+          gp: "0"
+        }
       }
     ];
     const stats = exportFuctions.getStats();
