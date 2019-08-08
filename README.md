@@ -24,3 +24,6 @@ Run `npm test -- --watch`
 <img src="https://i.imgur.com/3QvJFgd.png"/>
 <hr>
 <img src="https://i.imgur.com/cyBmMLJ.png"/>
+
+## Some references
+[Jest Fetch Mock](https://www.npmjs.com/package/jest-fetch-mock#installation-and-setup)  
