@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        habiticaCustomSkills
-// @version     1.0
+// @version     1.1
 // @description Creates new skills to modify custom stats
 // @grant       none
 // @include     http*://habitica.com*
@@ -73,8 +73,8 @@ const customSkills = [
 ];
 
 const createButtons = (skills, stats) => {
-  if (!skills || !stats) {
-    throw new Error("No input at createbuttons");
+  if (!skills) {
+    console.log("No input at createbuttons");
   }
 
   return skills.map(skill => {
@@ -111,15 +111,18 @@ const createButtons = (skills, stats) => {
     return divSpell;
   });
 };
+
 const changedStats = (skill, currentStats) => {
   return {
     "stats.hp": ((skill.multiplier.hp || 0) / 100 + 1) * currentStats.hp,
     "stats.mp": ((skill.multiplier.mp || 0) / 100 + 1) * currentStats.mp,
     "stats.exp": ((skill.multiplier.exp || 0) / 100 + 1) * currentStats.exp,
-    "stats.gp": skill.multiplier.gp + currentStats.gp
+    "stats.gp": ((skill.multiplier.gp || 0) / 1) * 1 + currentStats.gp
   };
 };
 
+// To do: change structure so getStats is called inside click event
+// so the same skill can be used more than once
 const addEvent = (button, onClickFunction, newStats) => {
   return button.addEventListener("click", () => onClickFunction(newStats));
 };
@@ -154,22 +157,25 @@ const putStats = async newStats => {
 };
 
 const getStats = async () => {
-  const resp = await fetch(
-    "https://habitica.com/api/v3/members/40387571-91ee-489e-960f-278bf8fd503a"
-  );
-  const data = await resp.json();
-  const stats = data.data.stats;
-  return stats;
+  try {
+    const resp = await fetch(
+      "https://habitica.com/api/v3/members/40387571-91ee-489e-960f-278bf8fd503a"
+    );
+    const data = await resp.json();
+    const stats = data.data.stats;
+    return stats;
+  } catch (err) {
+    console.log("Caugth: ", err);
+  }
 };
 
 const main = async () => {
   try {
-    console.log("CustomSkills script is running...");
     const stats = await getStats();
     const buttons = createButtons(customSkills, stats);
     appendSkills(buttons);
   } catch (err) {
-    console.log("Caught:", err);
+    console.log(err);
   }
 };
 
@@ -203,14 +209,13 @@ const costColor = stat => {
   }
 };
 
-// Testing with main() uncommented throws an Reference Error
-// (mocking not working?)
+// Comment main() before testing
 main();
 
 // The code below is needed for testing (npm test)
 // It might throw an warning in browser's console
 module.exports = {
-  main,
   addEvent,
-  createButtons
+  createButtons,
+  changedStats
 };

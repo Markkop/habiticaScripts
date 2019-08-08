@@ -13,7 +13,7 @@ Refresh your [Habitica](https://habitica.com/)'s home
 
 Access root folder (the same as package.json)  
 Run `npm install`  
-Run `npm test`
+Run `npm test -- --watch`
 
 # Progress History
 
