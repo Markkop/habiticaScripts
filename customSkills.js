@@ -124,7 +124,12 @@ const changedStats = (skill, currentStats) => {
 // To do: change structure so getStats is called inside click event
 // so the same skill can be used more than once
 const addEvent = (button, onClickFunction, newStats) => {
-  return button.addEventListener("click", () => onClickFunction(newStats));
+  // Before making the logic, try to mock getStats on testing
+  const currentStats = functions.getStats();
+  console.log(currentStats);
+  return button.addEventListener("click", () => {
+    onClickFunction(newStats);
+  });
 };
 
 const appendSkills = buttons => {
@@ -210,12 +215,15 @@ const costColor = stat => {
 };
 
 // Comment main() before testing
-main();
+//main();
 
 // The code below is needed for testing (npm test)
 // It might throw an warning in browser's console
-module.exports = {
+const functions = {
   addEvent,
   createButtons,
-  changedStats
+  changedStats,
+  getStats
 };
+
+module.exports = functions;
