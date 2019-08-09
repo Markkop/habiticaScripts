@@ -21,6 +21,7 @@
 // *except gold being flat value
 // eg. changeGp: "+20" => +20 gold
 
+
 const customSkills = [
   {
     name: "Soul Pact",
@@ -106,8 +107,7 @@ const createButtons = (skills, stats) => {
     </div>`;
 
     divSpell.className = "col-12 col-md-3";
-    const newStats = changedStats(skill, stats);
-    addEvent(divSpell, putStats, newStats);
+    addEvent(divSpell, putStats);
     return divSpell;
   });
 };
@@ -123,11 +123,10 @@ const changedStats = (skill, currentStats) => {
 
 // To do: change structure so getStats is called inside click event
 // so the same skill can be used more than once
-const addEvent = (button, onClickFunction, newStats) => {
-  // Before making the logic, try to mock getStats on testing
-  const currentStats = functions.getStats();
-  console.log(currentStats);
+const addEvent = (button, onClickFunction) => {
   return button.addEventListener("click", () => {
+    const currentStats = exportFunctions.getStats();
+    const newStats = changedStats(skill, currentStats);
     onClickFunction(newStats);
   });
 };
@@ -161,7 +160,7 @@ const putStats = async newStats => {
   console.log("The following stats were updated: ", await resp.json());
 };
 
-const getStats = async () => {
+export const getStats = async () => {
   try {
     const resp = await fetch(
       "https://habitica.com/api/v3/members/40387571-91ee-489e-960f-278bf8fd503a"
@@ -219,11 +218,18 @@ const costColor = stat => {
 
 // The code below is needed for testing (npm test)
 // It might throw an warning in browser's console
-const functions = {
+
+// Functions need to be exported this way so
+// they can be correctly mocked in the test file
+// Also, mocked functions should be used as
+// exportFunctions.getStats()
+const exportFunctions ={
   addEvent,
   createButtons,
   changedStats,
-  getStats
+  getStats,
+  putStats
 };
 
-module.exports = functions;
+export default exportFunctions;
+

@@ -24,3 +24,5 @@ Run `npm test -- --watch`
 <img src="https://i.imgur.com/3QvJFgd.png"/>
 <hr>
 <img src="https://i.imgur.com/cyBmMLJ.png"/>
+
+[How to mock specific module function in jest?](https://medium.com/@qjli/how-to-mock-specific-module-function-in-jest-715e39a391f4)
