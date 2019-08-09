@@ -1,5 +1,11 @@
 import * as customSkills from "./customSkills";
 
+console.log(customSkills);
+customSkills.putStats = jest.fn(() => {});
+customSkills.getStats = jest.fn().mockImplementation(() => "42");
+
+console.log(customSkills);
+
 const skills = [
   {
     name: "Soul Pact",
@@ -55,5 +61,20 @@ describe("changedStats", () => {
       "stats.exp": 45,
       "stats.gp": 50
     });
+  });
+});
+
+describe("addEvent", () => {
+  it("appends skills", () => {
+    const stats = {
+      "stats.hp": 45,
+      "stats.mp": 45,
+      "stats.exp": 45,
+      "stats.gp": 50
+    };
+    const button = document.createElement("div");
+    customSkills.addEvent(button, customSkills.putStats, stats);
+    expect(customSkills.getStats).toHaveBeenCalled(); //Make this test pass
+    console.log(button);
   });
 });
