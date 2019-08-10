@@ -36,7 +36,6 @@ const stats = {
 };
 
 describe("createButtons", () => {
-  
   it("creates two buttons", () => {
     expect(exportFunctions.createButtons).toBeDefined();
     const buttons = exportFunctions.createButtons(skills, stats);
@@ -47,6 +46,12 @@ describe("createButtons", () => {
     expect(() => {
       exportFunctions.createButtons();
     }).toThrow();
+  });
+
+  it("adds onclick event", () => {
+    const buttons = exportFunctions.createButtons(skills, stats);
+    expect(buttons[0]).toHaveProperty("onclick", expect.anything());
+    expect(buttons[1]).toHaveProperty("onclick", expect.anything());
   });
 });
 
@@ -63,18 +68,23 @@ describe("changedStats", () => {
   });
 });
 
-describe("addEvent", () => {
-  it("appends skills", () => {
-    const stats = {
-      "stats.hp": 45,
-      "stats.mp": 45,
-      "stats.exp": 45,
-      "stats.gp": 50
-    };
-    const button = document.createElement("div");
-    exportFunctions.addEvent(button, exportFunctions.putStats);
-    //expect(exportFunctions.getStats).toHaveBeenCalled();
-    //Make button being clicked to then check the line above 
-    console.log(button);
+describe("onClickSkill", () => {
+  it("calls mock functions", async () => {
+    expect(exportFunctions.onClickSkill).toBeDefined();
+    exportFunctions.onClickSkill(skills[0]);
+    expect(await exportFunctions.getStats).toHaveBeenCalled();
+    expect(await exportFunctions.putStats).toHaveBeenCalled();
+  });
+});
+
+describe("appendSkills", () => {
+  const spellContainer = document.createElement("div");
+  spellContainer.className = "container spell-container";
+  document.body.appendChild(spellContainer);
+
+  it("appends the right number of buttons", () => {
+    const buttons = exportFunctions.createButtons(skills, stats);
+    const newSkillsDiv = exportFunctions.appendSkills(buttons);
+    expect(newSkillsDiv).toHaveLength(2);
   });
 });
