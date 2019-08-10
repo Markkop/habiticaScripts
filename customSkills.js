@@ -228,4 +228,4 @@ const exportFunctions = {
 export default exportFunctions;
 
 // Comment main() if testing, uncomment if running
-//main();
+main();
