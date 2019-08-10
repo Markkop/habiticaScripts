@@ -2,8 +2,12 @@ import exportFunctions from "./customSkills";
 
 //Mocked functions
 exportFunctions.putStats = jest.fn(() => {});
+<<<<<<< HEAD
 exportFunctions.getStats = jest.fn(() => stats.json);
 exportFunctions.main = jest.fn(() => {});
+=======
+exportFunctions.getStats = jest.fn(() => stats);
+>>>>>>> 072d30bc8acc32385b82aae9cb266202d38f0758
 
 const skills = [
   {
