@@ -21,7 +21,6 @@
 // *except gold being flat value
 // eg. changeGp: "+20" => +20 gold
 
-
 const customSkills = [
   {
     name: "Soul Pact",
@@ -73,11 +72,7 @@ const customSkills = [
   }
 ];
 
-const createButtons = (skills, stats) => {
-  if (!skills) {
-    console.log("No input at createbuttons");
-  }
-
+const createButtons = skills => {
   return skills.map(skill => {
     const divSpell = document.createElement("div");
 
@@ -107,7 +102,7 @@ const createButtons = (skills, stats) => {
     </div>`;
 
     divSpell.className = "col-12 col-md-3";
-    addEvent(divSpell, putStats);
+    divSpell.onclick = () => onClickSkill(skill);
     return divSpell;
   });
 };
@@ -121,14 +116,10 @@ const changedStats = (skill, currentStats) => {
   };
 };
 
-// To do: change structure so getStats is called inside click event
-// so the same skill can be used more than once
-const addEvent = (button, onClickFunction) => {
-  return button.addEventListener("click", () => {
-    const currentStats = exportFunctions.getStats();
-    const newStats = changedStats(skill, currentStats);
-    onClickFunction(newStats);
-  });
+const onClickSkill = async skill => {
+  const currentStats = await exportFunctions.getStats();
+  const newStats = changedStats(skill, currentStats);
+  return await exportFunctions.putStats(newStats);
 };
 
 const appendSkills = buttons => {
@@ -139,10 +130,15 @@ const appendSkills = buttons => {
     alert(`The spell cointainer was not found. Try refreshing the page.`);
   }
 
-  const div = document.createElement("div");
-  div.className = "row newSpells";
-  buttons.forEach(button => div.appendChild(button));
-  spellContainer.appendChild(div);
+  const newSkillsDiv = document.createElement("div");
+  newSkillsDiv.className = "row newSpells";
+
+  const appendedButtons = buttons.map(button =>
+    newSkillsDiv.appendChild(button)
+  );
+
+  spellContainer.appendChild(newSkillsDiv);
+  return appendedButtons;
 };
 
 const putStats = async newStats => {
@@ -150,9 +146,9 @@ const putStats = async newStats => {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      "x-api-user": "userid",
-      "x-api-key": "tokenapi",
-      "x-client": "userid-Testing"
+      "x-api-user": "***REMOVED***",
+      "x-api-key": "***REMOVED***",
+      "x-client": "***REMOVED***-Testing"
     },
     body: JSON.stringify(newStats)
   });
@@ -160,7 +156,7 @@ const putStats = async newStats => {
   console.log("The following stats were updated: ", await resp.json());
 };
 
-export const getStats = async () => {
+const getStats = async () => {
   try {
     const resp = await fetch(
       "https://habitica.com/api/v3/members/***REMOVED***"
@@ -213,23 +209,23 @@ const costColor = stat => {
   }
 };
 
-// Comment main() before testing
-//main();
-
-// The code below is needed for testing (npm test)
-// It might throw an warning in browser's console
-
 // Functions need to be exported this way so
 // they can be correctly mocked in the test file
-// Also, mocked functions should be used as
+// Also, mocked functions should be used such as
 // exportFunctions.getStats()
-const exportFunctions ={
-  addEvent,
+
+const exportFunctions = {
+  appendSkills,
   createButtons,
   changedStats,
   getStats,
-  putStats
+  putStats,
+  onClickSkill
 };
 
+/* Comment export default if running the script via Greasemonkey
+   Uncomment it if testing or developing */
 export default exportFunctions;
 
+// Comment main() if testing, uncomment if running
+//main();
