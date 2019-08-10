@@ -72,11 +72,7 @@ const customSkills = [
   }
 ];
 
-const createButtons = (skills, stats) => {
-  if (!skills) {
-    console.log("No input at createbuttons");
-  }
-
+const createButtons = skills => {
   return skills.map(skill => {
     const divSpell = document.createElement("div");
 
@@ -106,8 +102,7 @@ const createButtons = (skills, stats) => {
     </div>`;
 
     divSpell.className = "col-12 col-md-3";
-    const newStats = changedStats(skill, stats);
-    addEvent(divSpell, putStats, newStats);
+    divSpell.onclick = () => onClickSkill(skill);
     return divSpell;
   });
 };
@@ -121,10 +116,10 @@ const changedStats = (skill, currentStats) => {
   };
 };
 
-// To do: change structure so getStats is called inside click event
-// so the same skill can be used more than once
-const addEvent = (button, onClickFunction, newStats) => {
-  return button.addEventListener("click", () => onClickFunction(newStats));
+const onClickSkill = async skill => {
+  const currentStats = await exportFunctions.getStats();
+  const newStats = changedStats(skill, currentStats);
+  return await exportFunctions.putStats(newStats);
 };
 
 const appendSkills = buttons => {
@@ -135,10 +130,15 @@ const appendSkills = buttons => {
     alert(`The spell cointainer was not found. Try refreshing the page.`);
   }
 
-  const div = document.createElement("div");
-  div.className = "row newSpells";
-  buttons.forEach(button => div.appendChild(button));
-  spellContainer.appendChild(div);
+  const newSkillsDiv = document.createElement("div");
+  newSkillsDiv.className = "row newSpells";
+
+  const appendedButtons = buttons.map(button =>
+    newSkillsDiv.appendChild(button)
+  );
+
+  spellContainer.appendChild(newSkillsDiv);
+  return appendedButtons;
 };
 
 const putStats = async newStats => {
@@ -146,9 +146,9 @@ const putStats = async newStats => {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      "x-api-user": "userid",
-      "x-api-key": "tokenapi",
-      "x-client": "userid-Testing"
+      "x-api-user": "***REMOVED***",
+      "x-api-key": "***REMOVED***",
+      "x-client": "***REMOVED***-Testing"
     },
     body: JSON.stringify(newStats)
   });
@@ -209,13 +209,23 @@ const costColor = stat => {
   }
 };
 
-// Comment main() before testing
-main();
+// Functions need to be exported this way so
+// they can be correctly mocked in the test file
+// Also, mocked functions should be used such as
+// exportFunctions.getStats()
 
-// The code below is needed for testing (npm test)
-// It might throw an warning in browser's console
-module.exports = {
-  addEvent,
+const exportFunctions = {
+  appendSkills,
   createButtons,
-  changedStats
+  changedStats,
+  getStats,
+  putStats,
+  onClickSkill
 };
+
+/* Comment export default if running the script via Greasemonkey
+   Uncomment it if testing or developing */
+export default exportFunctions;
+
+// Comment main() if testing, uncomment if running
+//main();

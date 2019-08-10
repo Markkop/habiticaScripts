@@ -1,4 +1,8 @@
-import * as customSkills from "./customSkills";
+import exportFunctions from "./customSkills";
+
+//Mocked functions
+exportFunctions.putStats = jest.fn(() => {});
+exportFunctions.getStats = jest.fn(() => stats);
 
 const skills = [
   {
@@ -33,27 +37,54 @@ const stats = {
 
 describe("createButtons", () => {
   it("creates two buttons", () => {
-    expect(customSkills.createButtons).toBeDefined();
-    const buttons = customSkills.createButtons(skills, stats);
+    expect(exportFunctions.createButtons).toBeDefined();
+    const buttons = exportFunctions.createButtons(skills, stats);
     expect(buttons).toHaveLength(2);
   });
 
   it("it throws an error if no inputs are provided", () => {
     expect(() => {
-      customSkills.createButtons();
+      exportFunctions.createButtons();
     }).toThrow();
+  });
+
+  it("adds onclick event", () => {
+    const buttons = exportFunctions.createButtons(skills, stats);
+    expect(buttons[0]).toHaveProperty("onclick", expect.anything());
+    expect(buttons[1]).toHaveProperty("onclick", expect.anything());
   });
 });
 
 describe("changedStats", () => {
   it("apply modifiers correctly", () => {
-    expect(customSkills.changedStats).toBeDefined();
-    const newStats = customSkills.changedStats(skills[0], stats);
+    expect(exportFunctions.changedStats).toBeDefined();
+    const newStats = exportFunctions.changedStats(skills[0], stats);
     expect(newStats).toStrictEqual({
       "stats.hp": 45,
       "stats.mp": 45,
       "stats.exp": 45,
       "stats.gp": 50
     });
+  });
+});
+
+describe("onClickSkill", () => {
+  it("calls mock functions", async () => {
+    expect(exportFunctions.onClickSkill).toBeDefined();
+    exportFunctions.onClickSkill(skills[0]);
+    expect(await exportFunctions.getStats).toHaveBeenCalled();
+    expect(await exportFunctions.putStats).toHaveBeenCalled();
+  });
+});
+
+describe("appendSkills", () => {
+  const spellContainer = document.createElement("div");
+  spellContainer.className = "container spell-container";
+  document.body.appendChild(spellContainer);
+
+  it("appends the right number of buttons", () => {
+    const buttons = exportFunctions.createButtons(skills, stats);
+    const newSkillsDiv = exportFunctions.appendSkills(buttons);
+    expect(newSkillsDiv).toHaveLength(2);
   });
 });
