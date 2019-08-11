@@ -83,7 +83,7 @@ const createButtons = skills => {
     const divSpell = document.createElement("div");
 
     const divsCosts = Object.keys(skill.multiplier)
-      .filter(cost => skill.multiplier[cost] < 0)
+      .filter(cost => splitValue(skill.multiplier[cost]).value < 0)
       .reduce((str, cost) => {
         return str.concat(`
           <div data-v-d5085df8="" class="mana-text" style="padding-top: 0; display: flex; margin-bottom: 0; justify-content: center;">
