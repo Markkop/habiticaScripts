@@ -3,7 +3,7 @@ import exportFunctions from "./customSkills";
 //Mocked functions
 exportFunctions.putStats = jest.fn(() => {});
 exportFunctions.getStats = jest.fn(() => stats);
-exportFunctions.main = jest.fn(() => console.log("mockupmain"));
+
 window.alert = jest.fn(() => console.log("Alerted"));
 
 const skills = [
@@ -25,7 +25,7 @@ const skills = [
       hp: "0",
       mp: "-20M",
       exp: "-10C",
-      gp: "30F"
+      gp: "10M"
     }
   },
   {
@@ -33,9 +33,9 @@ const skills = [
     imgSrc: "http://pixeljoint.com/files/icons/goldbar.png",
     statsChange: {
       hp: "-99M",
-      mp: "0",
+      mp: "10",
       exp: "0",
-      gp: "0"
+      gp: "-10"
     }
   }
 ];
@@ -68,6 +68,13 @@ describe("createButtons", () => {
     expect(buttons[0]).toHaveProperty("onclick", expect.anything());
     expect(buttons[1]).toHaveProperty("onclick", expect.anything());
   });
+
+  it("clicks", async () => {
+    const buttons = exportFunctions.createButtons(skills, stats);
+    buttons[0].click();
+    expect(await exportFunctions.getStats).toHaveBeenCalled();
+    expect(await exportFunctions.putStats).toHaveBeenCalled();
+  });
 });
 
 describe("changeStats", () => {
@@ -86,7 +93,7 @@ describe("changeStats", () => {
       "stats.hp": 30,
       "stats.mp": 20,
       "stats.exp": 45,
-      "stats.gp": 80
+      "stats.gp": 55
     });
 
     const highCostStats = exportFunctions.changeStats(skills[2], stats);
@@ -97,6 +104,32 @@ describe("changeStats", () => {
       "stats.gp": stats.gp
     });
     expect(window.alert).toHaveBeenCalled();
+  });
+
+  it("throws an error with wrong skill object", () => {
+    const wrongMpStat = exportFunctions.changeStats(
+      { statsChange: { hp: "-50M", sp: "30" } },
+      stats
+    );
+    expect(wrongMpStat).toStrictEqual({
+      "stats.hp": 5,
+      "stats.mp": 40,
+      "stats.exp": 50,
+      "stats.gp": 50
+    });
+    expect(exportFunctions.changeStats).toThrow();
+
+    const wrongObject = exportFunctions.changeStats(
+      { statsChange: { nothing: "at all" } },
+      stats
+    );
+    expect(wrongObject).toStrictEqual({
+      "stats.hp": stats.hp,
+      "stats.mp": stats.mp,
+      "stats.exp": stats.exp,
+      "stats.gp": stats.gp
+    });
+    expect(exportFunctions.changeStats).toThrow();
   });
 });
 
@@ -132,11 +165,17 @@ describe("onClickSkill", () => {
 });
 
 describe("appendSkills", () => {
-  const spellContainer = document.createElement("div");
-  spellContainer.className = "container spell-container";
-  document.body.appendChild(spellContainer);
+  it("throws error if didn't find spell container", () => {
+    const buttons = exportFunctions.createButtons(skills, stats);
+    const newSkillsDiv = exportFunctions.appendSkills(buttons);
+    expect(newSkillsDiv).toStrictEqual([]);
+  });
 
   it("appends the right number of buttons", () => {
+    const spellContainer = document.createElement("div");
+    spellContainer.className = "container spell-container";
+    document.body.appendChild(spellContainer);
+
     const buttons = exportFunctions.createButtons(skills, stats);
     const newSkillsDiv = exportFunctions.appendSkills(buttons);
     expect(newSkillsDiv).toHaveLength(3);
@@ -147,5 +186,23 @@ describe("main", () => {
   it("runs with mockup", async () => {
     exportFunctions.main();
     expect(await exportFunctions.getStats).toHaveBeenCalled();
+  });
+});
+
+describe("selectMaxValues", () => {
+  it("gets right strings", () => {
+    const hp = exportFunctions.selectMaxValues("hp");
+    expect(hp).toBe("maxHealth");
+    const mp = exportFunctions.selectMaxValues("mp");
+    expect(mp).toBe("maxMP");
+    const exp = exportFunctions.selectMaxValues("exp");
+    expect(exp).toBe("toNextLevel");
+    const gp = exportFunctions.selectMaxValues("gp");
+    expect(gp).toBe("gp");
+  });
+
+  it("fails if wrong input", () => {
+    const error = exportFunctions.selectMaxValues("asdfgr");
+    expect(error).toBe("error");
   });
 });

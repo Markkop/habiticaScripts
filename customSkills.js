@@ -7,18 +7,11 @@
 // @run-at 	    document-idle
 // ==/UserScript==
 
-// Next updates:
-// - Create more testing to then being able to;
-// - Refactor the code;
-// - Create level requeriments
-// - Make stats such as INT modify reward values
-// - Make description as hover instead of just being a title (any ideas?)
-// - Allow multiple lines of skills / more than four skills
-
-// Values changes are based on max value
-// eg. changeHp: "-10" => -10% Max HP
-// *except gold being flat value
-// eg. changeGp: "+20" => +20 gold
+// Examples for statsChange values in skill object:
+// hp: "-10M" = Consumes 10% of max hp
+// mp: "-25C" = Consumes 25% of current mp
+// gp: "+30F" or "+30" = Adds 30 pieces of gold
+// So, M = max, C = current, F = flat
 
 // Replace with yours: https://habitica.com/user/settings/api
 const tokens = {
@@ -115,7 +108,7 @@ const createButtons = skills => {
 const changeStats = (skill, currentStats) => {
   const newStats = Object.keys(skill.statsChange).map(stat => {
     const object = exportFunctions.splitString(skill.statsChange[stat]);
-    if (object.value === 0) {
+    if (!object.value) {
       return currentStats[stat];
     }
     switch (object.type) {
@@ -144,10 +137,10 @@ const changeStats = (skill, currentStats) => {
     }
 
     return {
-      "stats.hp": newStats[0],
-      "stats.mp": newStats[1],
-      "stats.exp": newStats[2],
-      "stats.gp": newStats[3]
+      "stats.hp": newStats[0] || currentStats["hp"],
+      "stats.mp": newStats[1] || currentStats["mp"],
+      "stats.exp": newStats[2] || currentStats["exp"],
+      "stats.gp": newStats[3] || currentStats["gp"]
     };
   };
 
@@ -191,19 +184,21 @@ const appendSkills = buttons => {
   )[0];
   if (!spellContainer) {
     alert(`The spell cointainer was not found. Try refreshing the page.`);
+    return [];
+  } else {
+    const newSkillsDiv = document.createElement("div");
+    newSkillsDiv.className = "row newSpells";
+
+    const appendedButtons = buttons.map(button =>
+      newSkillsDiv.appendChild(button)
+    );
+
+    spellContainer.appendChild(newSkillsDiv);
+    return appendedButtons;
   }
-
-  const newSkillsDiv = document.createElement("div");
-  newSkillsDiv.className = "row newSpells";
-
-  const appendedButtons = buttons.map(button =>
-    newSkillsDiv.appendChild(button)
-  );
-
-  spellContainer.appendChild(newSkillsDiv);
-  return appendedButtons;
 };
 
+/* istanbul ignore next */
 const putStats = async newStats => {
   let resp = await fetch("https://habitica.com/api/v3/user", {
     method: "PUT",
@@ -219,6 +214,7 @@ const putStats = async newStats => {
   console.log("The following stats were updated: ", await resp.json());
 };
 
+/* istanbul ignore next */
 const getStats = async () => {
   try {
     const resp = await fetch(
@@ -232,6 +228,7 @@ const getStats = async () => {
   }
 };
 
+/* istanbul ignore next */
 const main = async () => {
   try {
     const stats = await exportFunctions.getStats();
@@ -252,8 +249,6 @@ const iconsHtml = stat => {
       return '<div style="width: 16px; margin-right: 0.2em;" data-v-062fc6e8="" class="svg-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path fill="#FFA623" d="M16 16l8-4-8-4-4-8-4 8-8 4 8 4 4 8z"></path><path fill="#FFF" d="M4.5 12l5-2.5L12 12zm7.5 7.5l-2.5-5L12 12zm7.5-7.5l-5 2.5L12 12zM12 4.5l2.5 5L12 12z" opacity=".25"></path><path fill="#BF7D1A" d="M19.5 12l-5-2.5L12 12z" opacity=".25"></path><path fill="#BF7D1A" d="M12 19.5l2.5-5L12 12z" opacity=".5"></path><path fill="#FFF" d="M4.5 12l5 2.5L12 12zM12 4.5l-2.5 5L12 12z" opacity=".5"></path><path fill="#FFF" d="M10.8 13.2L8.5 12l2.3-1.2L12 8.5l1.2 2.3 2.3 1.2-2.3 1.2-1.2 2.3z" opacity=".5"></path></g></svg></div>';
     case "gp":
       return '<div style="width: 16px; margin-right: 0.2em;" data-v-062fc6e8="" class="svg-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><circle cx="12" cy="12" r="12" fill="#FFA623"></circle><path fill="#FFF" d="M6.3 17.7c-3.1-3.1-3.1-8.2 0-11.3 3.1-3.1 8.2-3.1 11.3 0" opacity=".5"></path><path fill="#FFF" d="M17.7 6.3c3.1 3.1 3.1 8.2 0 11.3-3.1 3.1-8.2 3.1-11.3 0" opacity=".25"></path><path fill="#BF7D1A" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8z" opacity=".5"></path><path fill="#BF7D1A" d="M13 9v2h-2V9H9v6h2v-2h2v2h2V9z" opacity=".75"></path></g></svg></div>';
-    default:
-      return '<div class="no valid stat selected"></div>';
   }
 };
 
@@ -267,8 +262,6 @@ const costColor = stat => {
       return "#BF7300";
     case "gp":
       return "#BF7300";
-    default:
-      return "no color";
   }
 };
 
@@ -285,13 +278,15 @@ const exportFunctions = {
   putStats,
   onClickSkill,
   splitString,
-  selectMaxValues
+  selectMaxValues,
+  main
 };
 
 // Uncomment this to test this file
-// export default exportFunctions;
+export default exportFunctions;
 
-if (document.URL === "https://habitica.com/") {
+/* istanbul ignore next */
+if (document.body) {
   // Wait 3s before running the script
   setTimeout(() => main(), 3000);
 }

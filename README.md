@@ -2,7 +2,7 @@
 
 ## How to Use
 
-Install [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) / [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)  
+Install [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) / [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)  
 Click on its icon and `New user script`  
 Copy the content of [customSkills.js](https://github.com/Markkop/habiticaCustomSkills/blob/master/customSkills.js) and paste it  
 Change `userid` in the **tokens** function for your User Id (eg. 50387371-92ee-...)  
@@ -13,7 +13,8 @@ Reload your [Habitica](https://habitica.com/)'s home
 
 Access root folder (the same as package.json)  
 Run `npm install`  
-Run `npm test -- --watch`
+Run `npm test -- --watch`  
+Run `npm test -- --coverage`
 
 # Progress History
 
@@ -27,8 +28,10 @@ Run `npm test -- --watch`
 
 ## Some references
 
-[Jest Fetch Mock](https://www.npmjs.com/package/jest-fetch-mock#installation-and-setup)  
-[How to mock specific module function in jest?](https://medium.com/@qjli/how-to-mock-specific-module-function-in-jest-715e39a391f4)  
-[Things I learned after writing tests for JS and HTML page](https://dev.to/snowleo208/things-i-learned-after-writing-tests-for-js-and-html-page-4lja)  
-[BFG Repo Cleaner](https://rtyley.github.io/bfg-repo-cleaner/)  
-[Reduce unit tests boilerplate with Jest’s .each syntax](https://itnext.io/reduce-unit-tests-boilerplate-with-jests-each-syntax-f5e48828437f)
+- [Jest Fetch Mock](https://www.npmjs.com/package/jest-fetch-mock#installation-and-setup)
+- [How to mock specific module function in jest?](https://medium.com/@qjli/how-to-mock-specific-module-function-in-jest-715e39a391f4)
+- [Things I learned after writing tests for JS and HTML page](https://dev.to/snowleo208/things-i-learned-after-writing-tests-for-js-and-html-page-4lja)
+- [BFG Repo Cleaner](https://rtyley.github.io/bfg-repo-cleaner/)
+- [Reduce unit tests boilerplate with Jest’s .each syntax](https://itnext.io/reduce-unit-tests-boilerplate-with-jests-each-syntax-f5e48828437f)
+- [Jest ignore or exclude file/function/statement from test coverage](https://codewithhugo.com/jest-exclude-coverage/)
+- [How to read Test Coverage report generated using Jest](https://medium.com/@krishankantsinghal/how-to-read-test-coverage-report-generated-using-jest-c2d1cb70da8b)
