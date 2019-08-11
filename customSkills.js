@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        habiticaCustomSkills
-// @version     1.1
+// @version     1.2
 // @description Creates new skills to modify custom stats
 // @grant       none
 // @include     http*://habitica.com*
@@ -10,7 +10,6 @@
 // Next updates:
 // - Create more testing to then being able to;
 // - Refactor the code;
-// - Give the option to choose multipliers or adders
 // - Create level requeriments
 // - Make stats such as INT modify reward values
 // - Make description as hover instead of just being a title (any ideas?)
@@ -34,10 +33,10 @@ const customSkills = [
       "https://www.pngix.com/pngfile/middle/48-486388_spell-book-icon-spellbook-icon-hd-png-download.png",
     description:
       "Sacrifices health and experience to recover 10% of your max mana",
-    multiplier: {
+    statsChange: {
       hp: "-10",
       mp: "+10",
-      exp: "-10",
+      exp: "-50M",
       gp: "0"
     }
   },
@@ -45,7 +44,7 @@ const customSkills = [
     name: "Midas Touch",
     imgSrc: "http://pixeljoint.com/files/icons/goldbar.png",
     description: "Transmutes 30 gold coins by spending mana and experience",
-    multiplier: {
+    statsChange: {
       hp: "0",
       mp: "-20M",
       exp: "-10C",
@@ -58,7 +57,7 @@ const customSkills = [
       "https://www.pngix.com/pngfile/middle/185-1857051_stopwatch-comments-delay-clipart-transparent-hd-png-download.png",
     description:
       "Sends you back in time some moments ago and restores 10% of your max health",
-    multiplier: {
+    statsChange: {
       hp: "+10",
       mp: "-10",
       exp: "-20",
@@ -69,7 +68,7 @@ const customSkills = [
     name: "Exiva gold",
     imgSrc: "http://pixeljoint.com/files/icons/mh_coinzpreview.png",
     description: "Casts a power word that finds coins",
-    multiplier: {
+    statsChange: {
       hp: "+0",
       mp: "-1",
       exp: "0",
@@ -82,14 +81,14 @@ const createButtons = skills => {
   return skills.map(skill => {
     const divSpell = document.createElement("div");
 
-    const divsCosts = Object.keys(skill.multiplier)
-      .filter(cost => splitValue(skill.multiplier[cost]).value < 0)
+    const divsCosts = Object.keys(skill.statsChange)
+      .filter(cost => splitString(skill.statsChange[cost]).value < 0)
       .reduce((str, cost) => {
         return str.concat(`
           <div data-v-d5085df8="" class="mana-text" style="padding-top: 0; display: flex; margin-bottom: 0; justify-content: center;">
             ${iconsHtml(cost)}  
           <div data-v-d5085df8="" style="color: ${costColor(cost)}">${
-          skill.multiplier[cost].split("-")[1]
+          skill.statsChange[cost].split("-")[1]
         }%</div></div>`);
       }, "");
 
@@ -113,19 +112,16 @@ const createButtons = skills => {
   });
 };
 
-const changedStats = (skill, currentStats) => {
-  const array = Object.keys(skill.multiplier).map(stat => {
-    const object = exportFunctions.splitValue(skill.multiplier[stat]);
+const changeStats = (skill, currentStats) => {
+  const newStats = Object.keys(skill.statsChange).map(stat => {
+    const object = exportFunctions.splitString(skill.statsChange[stat]);
     if (object.value === 0) {
       return currentStats[stat];
     }
     switch (object.type) {
       case "M":
-        return (
-          (object.value / 100) *
-            currentStats[exportFunctions.selectMaxValues(stat)] +
-          currentStats[stat]
-        );
+        const maxStat = currentStats[exportFunctions.selectMaxValues(stat)];
+        return (object.value / 100) * maxStat + currentStats[stat];
       case "C":
         return (object.value / 100 + 1) * currentStats[stat];
       default:
@@ -133,13 +129,29 @@ const changedStats = (skill, currentStats) => {
     }
   });
 
-  const outputStats = {
-    "stats.hp": array[0],
-    "stats.mp": array[1],
-    "stats.exp": array[2],
-    "stats.gp": array[3]
+  const checkNewStats = newStats => {
+    for (let i = 0; i < newStats.length; i++) {
+      if (newStats[i] < 0) {
+        const label = ["hp", "mp", "exp", "gp"];
+        alert(`Not enough ${label[i]}`);
+        return {
+          "stats.hp": currentStats["hp"],
+          "stats.mp": currentStats["mp"],
+          "stats.exp": currentStats["exp"],
+          "stats.gp": currentStats["gp"]
+        };
+      }
+    }
+
+    return {
+      "stats.hp": newStats[0],
+      "stats.mp": newStats[1],
+      "stats.exp": newStats[2],
+      "stats.gp": newStats[3]
+    };
   };
-  return outputStats;
+
+  return checkNewStats(newStats);
 };
 
 const selectMaxValues = stat => {
@@ -156,7 +168,7 @@ const selectMaxValues = stat => {
       return "error";
   }
 };
-const splitValue = str => {
+const splitString = str => {
   const strLength = str.length;
   if (/[a-zA-Z]$/.test(str)) {
     const value = Number(str.slice(0, strLength - 1));
@@ -169,7 +181,7 @@ const splitValue = str => {
 
 const onClickSkill = async skill => {
   const currentStats = await exportFunctions.getStats();
-  const newStats = changedStats(skill, currentStats);
+  const newStats = changeStats(skill, currentStats);
   return await exportFunctions.putStats(newStats);
 };
 
@@ -268,16 +280,16 @@ const costColor = stat => {
 const exportFunctions = {
   appendSkills,
   createButtons,
-  changedStats,
+  changeStats,
   getStats,
   putStats,
   onClickSkill,
-  splitValue,
+  splitString,
   selectMaxValues
 };
 
 // Uncomment this to test this file
-export default exportFunctions;
+// export default exportFunctions;
 
 if (document.URL === "https://habitica.com/") {
   // Wait 3s before running the script

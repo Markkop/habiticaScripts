@@ -4,13 +4,14 @@ import exportFunctions from "./customSkills";
 exportFunctions.putStats = jest.fn(() => {});
 exportFunctions.getStats = jest.fn(() => stats);
 exportFunctions.main = jest.fn(() => console.log("mockupmain"));
+window.alert = jest.fn(() => console.log("Alerted"));
 
 const skills = [
   {
     name: "Soul Pact",
     imgSrc:
       "https://www.pngix.com/pngfile/middle/48-486388_spell-book-icon-spellbook-icon-hd-png-download.png",
-    multiplier: {
+    statsChange: {
       hp: "-10M",
       mp: "-10C",
       exp: "+10M",
@@ -20,11 +21,21 @@ const skills = [
   {
     name: "Midas Touch",
     imgSrc: "http://pixeljoint.com/files/icons/goldbar.png",
-    multiplier: {
+    statsChange: {
       hp: "0",
       mp: "-20M",
       exp: "-10C",
       gp: "30F"
+    }
+  },
+  {
+    name: "High Cost",
+    imgSrc: "http://pixeljoint.com/files/icons/goldbar.png",
+    statsChange: {
+      hp: "-99M",
+      mp: "0",
+      exp: "0",
+      gp: "0"
     }
   }
 ];
@@ -40,10 +51,10 @@ const stats = {
 };
 
 describe("createButtons", () => {
-  it("creates two buttons", () => {
+  it("creates three buttons", () => {
     expect(exportFunctions.createButtons).toBeDefined();
     const buttons = exportFunctions.createButtons(skills, stats);
-    expect(buttons).toHaveLength(2);
+    expect(buttons).toHaveLength(3);
   });
 
   it("it throws an error if no inputs are provided", () => {
@@ -59,10 +70,10 @@ describe("createButtons", () => {
   });
 });
 
-describe("changedStats", () => {
+describe("changeStats", () => {
   it("apply modifiers correctly", () => {
-    expect(exportFunctions.changedStats).toBeDefined();
-    const soulPactStats = exportFunctions.changedStats(skills[0], stats);
+    expect(exportFunctions.changeStats).toBeDefined();
+    const soulPactStats = exportFunctions.changeStats(skills[0], stats);
     expect(soulPactStats).toStrictEqual({
       "stats.hp": 25,
       "stats.mp": 36,
@@ -70,33 +81,42 @@ describe("changedStats", () => {
       "stats.gp": 50
     });
 
-    const midasTouchStats = exportFunctions.changedStats(skills[1], stats);
+    const midasTouchStats = exportFunctions.changeStats(skills[1], stats);
     expect(midasTouchStats).toStrictEqual({
       "stats.hp": 30,
       "stats.mp": 20,
       "stats.exp": 45,
       "stats.gp": 80
     });
+
+    const highCostStats = exportFunctions.changeStats(skills[2], stats);
+    expect(highCostStats).toStrictEqual({
+      "stats.hp": stats.hp,
+      "stats.mp": stats.mp,
+      "stats.exp": stats.exp,
+      "stats.gp": stats.gp
+    });
+    expect(window.alert).toHaveBeenCalled();
   });
 });
 
-describe("splitValue", () => {
-  expect(exportFunctions.splitValue).toBeDefined();
+describe("splitStatsChange", () => {
+  expect(exportFunctions.splitString).toBeDefined();
 
   it("splits correctly", () => {
-    const plusMax = exportFunctions.splitValue("+10M");
+    const plusMax = exportFunctions.splitString("+10M");
     expect(plusMax).toStrictEqual({ value: 10, type: "M" });
 
-    const minusMax = exportFunctions.splitValue("-5M");
+    const minusMax = exportFunctions.splitString("-5M");
     expect(minusMax).toStrictEqual({ value: -5, type: "M" });
 
-    const plusCurrent = exportFunctions.splitValue("30C");
+    const plusCurrent = exportFunctions.splitString("30C");
     expect(plusCurrent).toStrictEqual({ value: 30, type: "C" });
 
-    const minusFlat = exportFunctions.splitValue("-10F");
+    const minusFlat = exportFunctions.splitString("-10F");
     expect(minusFlat).toStrictEqual({ value: -10, type: "F" });
 
-    const noLetter = exportFunctions.splitValue("-20");
+    const noLetter = exportFunctions.splitString("-20");
     expect(noLetter).toStrictEqual({ value: -20, type: "F" });
   });
 });
@@ -119,7 +139,7 @@ describe("appendSkills", () => {
   it("appends the right number of buttons", () => {
     const buttons = exportFunctions.createButtons(skills, stats);
     const newSkillsDiv = exportFunctions.appendSkills(buttons);
-    expect(newSkillsDiv).toHaveLength(2);
+    expect(newSkillsDiv).toHaveLength(3);
   });
 });
 
