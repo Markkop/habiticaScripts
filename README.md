@@ -30,4 +30,5 @@ Run `npm test -- --watch`
 [Jest Fetch Mock](https://www.npmjs.com/package/jest-fetch-mock#installation-and-setup)  
 [How to mock specific module function in jest?](https://medium.com/@qjli/how-to-mock-specific-module-function-in-jest-715e39a391f4)  
 [Things I learned after writing tests for JS and HTML page](https://dev.to/snowleo208/things-i-learned-after-writing-tests-for-js-and-html-page-4lja)  
-[BFG Repo Cleaner](https://rtyley.github.io/bfg-repo-cleaner/)
+[BFG Repo Cleaner](https://rtyley.github.io/bfg-repo-cleaner/)  
+[Reduce unit tests boilerplate with Jest’s .each syntax](https://itnext.io/reduce-unit-tests-boilerplate-with-jests-each-syntax-f5e48828437f)

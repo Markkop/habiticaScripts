@@ -47,9 +47,9 @@ const customSkills = [
     description: "Transmutes 30 gold coins by spending mana and experience",
     multiplier: {
       hp: "0",
-      mp: "-20",
-      exp: "-10",
-      gp: "+30"
+      mp: "-20M",
+      exp: "-10C",
+      gp: "+30F"
     }
   },
   {
@@ -114,12 +114,57 @@ const createButtons = skills => {
 };
 
 const changedStats = (skill, currentStats) => {
-  return {
-    "stats.hp": ((skill.multiplier.hp || 0) / 100 + 1) * currentStats.hp,
-    "stats.mp": ((skill.multiplier.mp || 0) / 100 + 1) * currentStats.mp,
-    "stats.exp": ((skill.multiplier.exp || 0) / 100 + 1) * currentStats.exp,
-    "stats.gp": ((skill.multiplier.gp || 0) / 1) * 1 + currentStats.gp
+  const array = Object.keys(skill.multiplier).map(stat => {
+    const object = exportFunctions.splitValue(skill.multiplier[stat]);
+    if (object.value === 0) {
+      return currentStats[stat];
+    }
+    switch (object.type) {
+      case "M":
+        return (
+          (object.value / 100) *
+            currentStats[exportFunctions.selectMaxValues(stat)] +
+          currentStats[stat]
+        );
+      case "C":
+        return (object.value / 100 + 1) * currentStats[stat];
+      default:
+        return object.value + currentStats[stat];
+    }
+  });
+
+  const outputStats = {
+    "stats.hp": array[0],
+    "stats.mp": array[1],
+    "stats.exp": array[2],
+    "stats.gp": array[3]
   };
+  return outputStats;
+};
+
+const selectMaxValues = stat => {
+  switch (stat) {
+    case "hp":
+      return "maxHealth";
+    case "mp":
+      return "maxMP";
+    case "exp":
+      return "toNextLevel";
+    case "gp":
+      return "gp";
+    default:
+      return "error";
+  }
+};
+const splitValue = str => {
+  const strLength = str.length;
+  if (/[a-zA-Z]$/.test(str)) {
+    const value = Number(str.slice(0, strLength - 1));
+    const lastChar = str.slice(strLength - 1, strLength);
+    return { value: value, type: lastChar };
+  } else {
+    return { value: Number(str), type: "F" };
+  }
 };
 
 const onClickSkill = async skill => {
@@ -226,11 +271,13 @@ const exportFunctions = {
   changedStats,
   getStats,
   putStats,
-  onClickSkill
+  onClickSkill,
+  splitValue,
+  selectMaxValues
 };
 
 // Uncomment this to test this file
-// export default exportFunctions;
+export default exportFunctions;
 
 if (document.URL === "https://habitica.com/") {
   // Wait 3s before running the script
