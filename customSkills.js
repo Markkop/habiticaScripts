@@ -21,6 +21,12 @@
 // *except gold being flat value
 // eg. changeGp: "+20" => +20 gold
 
+// Replace with yours: https://habitica.com/user/settings/api
+const tokens = {
+  user: "yourusertoken",
+  api: "yourtokenapi"
+};
+
 const customSkills = [
   {
     name: "Soul Pact",
@@ -146,9 +152,9 @@ const putStats = async newStats => {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      "x-api-user": "***REMOVED***",
-      "x-api-key": "***REMOVED***",
-      "x-client": "***REMOVED***-Testing"
+      "x-api-user": `${tokens.user}`,
+      "x-api-key": `${tokens.api}`,
+      "x-client": `${tokens.user}-Testing`
     },
     body: JSON.stringify(newStats)
   });
@@ -159,7 +165,7 @@ const putStats = async newStats => {
 const getStats = async () => {
   try {
     const resp = await fetch(
-      "https://habitica.com/api/v3/members/***REMOVED***"
+      `https://habitica.com/api/v3/members/${tokens.user}`
     );
     const data = await resp.json();
     const stats = data.data.stats;
@@ -171,7 +177,7 @@ const getStats = async () => {
 
 const main = async () => {
   try {
-    const stats = await getStats();
+    const stats = await exportFunctions.getStats();
     const buttons = createButtons(customSkills, stats);
     appendSkills(buttons);
   } catch (err) {
@@ -223,13 +229,10 @@ const exportFunctions = {
   onClickSkill
 };
 
-/* Comment export default if running the script via Greasemonkey
-   Uncomment it if testing or developing */
-export default exportFunctions;
+// Uncomment this to test this file
+// export default exportFunctions;
 
-// Comment main() if testing, uncomment if running
-<<<<<<< HEAD
-main();
-=======
-//main();
->>>>>>> 072d30bc8acc32385b82aae9cb266202d38f0758
+if (document.URL === "https://habitica.com/") {
+  // Wait 3s before running the script
+  setTimeout(() => main(), 3000);
+}

@@ -2,12 +2,8 @@ import exportFunctions from "./customSkills";
 
 //Mocked functions
 exportFunctions.putStats = jest.fn(() => {});
-<<<<<<< HEAD
-exportFunctions.getStats = jest.fn(() => stats.json);
-exportFunctions.main = jest.fn(() => {});
-=======
 exportFunctions.getStats = jest.fn(() => stats);
->>>>>>> 072d30bc8acc32385b82aae9cb266202d38f0758
+exportFunctions.main = jest.fn(() => console.log("mockupmain"));
 
 const skills = [
   {
@@ -91,5 +87,12 @@ describe("appendSkills", () => {
     const buttons = exportFunctions.createButtons(skills, stats);
     const newSkillsDiv = exportFunctions.appendSkills(buttons);
     expect(newSkillsDiv).toHaveLength(2);
+  });
+});
+
+describe("main", () => {
+  it("runs with mockup", async () => {
+    exportFunctions.main();
+    expect(await exportFunctions.getStats).toHaveBeenCalled();
   });
 });
