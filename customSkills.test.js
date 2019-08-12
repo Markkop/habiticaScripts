@@ -3,7 +3,6 @@ import exportFunctions from "./customSkills";
 //Mocked functions
 exportFunctions.putStats = jest.fn(() => {});
 exportFunctions.getStats = jest.fn(() => stats);
-
 window.alert = jest.fn(() => console.log("Alerted"));
 
 const skills = [
@@ -71,7 +70,7 @@ describe("createButtons", () => {
 
   it("clicks", async () => {
     const buttons = exportFunctions.createButtons(skills, stats);
-    buttons[0].click();
+    console.log(buttons[0].click());
     expect(await exportFunctions.getStats).toHaveBeenCalled();
     expect(await exportFunctions.putStats).toHaveBeenCalled();
   });
@@ -182,13 +181,6 @@ describe("appendSkills", () => {
   });
 });
 
-describe("main", () => {
-  it("runs with mockup", async () => {
-    exportFunctions.main();
-    expect(await exportFunctions.getStats).toHaveBeenCalled();
-  });
-});
-
 describe("selectMaxValues", () => {
   it("gets right strings", () => {
     const hp = exportFunctions.selectMaxValues("hp");
@@ -204,5 +196,12 @@ describe("selectMaxValues", () => {
   it("fails if wrong input", () => {
     const error = exportFunctions.selectMaxValues("asdfgr");
     expect(error).toBe("error");
+  });
+});
+
+describe("main", () => {
+  it("runs with mockup", async () => {
+    exportFunctions.main();
+    expect(await exportFunctions.getStats).toHaveBeenCalled();
   });
 });

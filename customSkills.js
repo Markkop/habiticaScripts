@@ -77,12 +77,15 @@ const createButtons = skills => {
     const divsCosts = Object.keys(skill.statsChange)
       .filter(cost => splitString(skill.statsChange[cost]).value < 0)
       .reduce((str, cost) => {
+        const costObject = splitString(skill.statsChange[cost]);
         return str.concat(`
           <div data-v-d5085df8="" class="mana-text" style="padding-top: 0; display: flex; margin-bottom: 0; justify-content: center;">
             ${iconsHtml(cost)}  
-          <div data-v-d5085df8="" style="color: ${costColor(cost)}">${
-          skill.statsChange[cost].split("-")[1]
-        }%</div></div>`);
+          <div data-v-d5085df8="" style="color: ${costColor(
+            cost
+          )}">${costObject.value * -1}${
+          costObject.type !== "F" ? "%" : ""
+        }</div></div>`);
       }, "");
 
     divSpell.innerHTML = `
@@ -175,7 +178,8 @@ const splitString = str => {
 const onClickSkill = async skill => {
   const currentStats = await exportFunctions.getStats();
   const newStats = changeStats(skill, currentStats);
-  return await exportFunctions.putStats(newStats);
+  await exportFunctions.putStats(newStats);
+  return newStats;
 };
 
 const appendSkills = buttons => {
