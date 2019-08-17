@@ -1,5 +1,12 @@
 # habiticaCustomSkills
 
+## Motivation
+
+I've already used **Habitica** once and just started using it again to organize myself. However, I've been so focused that I quickly **outleveled my friends** and wondered how could I adjust my leveling process so I could keep up with the party.  
+That's how this project begins. By **consuming experience points** while using skills, I could slow down my leveling in exchange for other resources such hp, mana and gold. The challenging part here is to balance them correctly so these custom skills don't become too overpowered.  
+I had almost no experience with Javascript and HTML before starting, but this small project was the perfect excuse to practice these abilites.  
+I also wanted to train my **test creating skills**, so that's why this project has many tests.
+
 ## How to Use
 
 Install [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) / [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)  
