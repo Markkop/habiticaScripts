@@ -27,20 +27,20 @@ const customSkills = [
     description:
       "Sacrifices health and experience to recover 10% of your max mana",
     statsChange: {
-      hp: "-10",
-      mp: "+10",
-      exp: "-50M",
+      hp: "-20M",
+      mp: "+10M",
+      exp: "-40M",
       gp: "0"
     }
   },
   {
     name: "Midas Touch",
     imgSrc: "http://pixeljoint.com/files/icons/goldbar.png",
-    description: "Transmutes 30 gold coins by spending mana and experience",
+    description: "Transmutes 30 gold coins by consuming mana and experience",
     statsChange: {
       hp: "0",
-      mp: "-20M",
-      exp: "-10C",
+      mp: "-25M",
+      exp: "-20M",
       gp: "+30F"
     }
   },
@@ -49,18 +49,18 @@ const customSkills = [
     imgSrc:
       "https://www.pngix.com/pngfile/middle/185-1857051_stopwatch-comments-delay-clipart-transparent-hd-png-download.png",
     description:
-      "Sends you back in time some moments ago and restores 10% of your max health",
+      "Sends you back in time some moments ago consuming all your current experience and restoring 10% of your max health",
     statsChange: {
       hp: "+10",
-      mp: "-10",
-      exp: "-20",
+      mp: "-70M",
+      exp: "-100C",
       gp: "0"
     }
   },
   {
     name: "Exiva gold",
     imgSrc: "http://pixeljoint.com/files/icons/mh_coinzpreview.png",
-    description: "Casts a power word that finds coins",
+    description: "Casts a power word that finds coins (test skill)",
     statsChange: {
       hp: "+0",
       mp: "-1",
@@ -69,6 +69,47 @@ const customSkills = [
     }
   }
 ];
+
+/* istanbul ignore next */
+const main = async () => {
+  try {
+    const stats = await exportFunctions.getStats();
+    const buttons = createButtons(customSkills, stats);
+    appendSkills(buttons);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+/* istanbul ignore next */
+const getStats = async () => {
+  try {
+    const resp = await fetch(
+      `https://habitica.com/api/v3/members/${tokens.user}`
+    );
+    const data = await resp.json();
+    const stats = data.data.stats;
+    return stats;
+  } catch (err) {
+    console.log("Caugth: ", err);
+  }
+};
+
+/* istanbul ignore next */
+const putStats = async newStats => {
+  let resp = await fetch("https://habitica.com/api/v3/user", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-user": `${tokens.user}`,
+      "x-api-key": `${tokens.api}`,
+      "x-client": `${tokens.user}-Testing`
+    },
+    body: JSON.stringify(newStats)
+  });
+  document.getElementsByClassName("top-menu-icon svg-icon")[5].click();
+  console.log("The following stats were updated: ", await resp.json());
+};
 
 const createButtons = skills => {
   return skills.map(skill => {
@@ -108,6 +149,34 @@ const createButtons = skills => {
   });
 };
 
+const onClickSkill = async skill => {
+  const currentStats = await exportFunctions.getStats();
+  const newStats = changeStats(skill, currentStats);
+  //Refactor so it doesn't PUT if it can't cast
+  await exportFunctions.putStats(newStats);
+  return newStats;
+};
+
+const appendSkills = buttons => {
+  const spellContainer = document.getElementsByClassName(
+    "container spell-container"
+  )[0];
+  if (!spellContainer) {
+    alert(`The spell cointainer was not found. Try refreshing the page.`);
+    return [];
+  } else {
+    const newSkillsDiv = document.createElement("div");
+    newSkillsDiv.className = "row newSpells";
+
+    const appendedButtons = buttons.map(button =>
+      newSkillsDiv.appendChild(button)
+    );
+
+    spellContainer.appendChild(newSkillsDiv);
+    return appendedButtons;
+  }
+};
+
 const changeStats = (skill, currentStats) => {
   const newStats = Object.keys(skill.statsChange).map(stat => {
     const object = exportFunctions.splitString(skill.statsChange[stat]);
@@ -129,7 +198,11 @@ const changeStats = (skill, currentStats) => {
     for (let i = 0; i < newStats.length; i++) {
       if (newStats[i] < 0) {
         const label = ["hp", "mp", "exp", "gp"];
-        alert(`Not enough ${label[i]}`);
+        const message = `You require ${Math.round(
+          currentStats[label[i]] + newStats[i] * -1
+        )}${label[i]} to cast this skill`;
+        console.log(message);
+        alert(message);
         return {
           "stats.hp": currentStats["hp"],
           "stats.mp": currentStats["mp"],
@@ -172,74 +245,6 @@ const splitString = str => {
     return { value: value, type: lastChar };
   } else {
     return { value: Number(str), type: "F" };
-  }
-};
-
-const onClickSkill = async skill => {
-  const currentStats = await exportFunctions.getStats();
-  const newStats = changeStats(skill, currentStats);
-  await exportFunctions.putStats(newStats);
-  return newStats;
-};
-
-const appendSkills = buttons => {
-  const spellContainer = document.getElementsByClassName(
-    "container spell-container"
-  )[0];
-  if (!spellContainer) {
-    alert(`The spell cointainer was not found. Try refreshing the page.`);
-    return [];
-  } else {
-    const newSkillsDiv = document.createElement("div");
-    newSkillsDiv.className = "row newSpells";
-
-    const appendedButtons = buttons.map(button =>
-      newSkillsDiv.appendChild(button)
-    );
-
-    spellContainer.appendChild(newSkillsDiv);
-    return appendedButtons;
-  }
-};
-
-/* istanbul ignore next */
-const putStats = async newStats => {
-  let resp = await fetch("https://habitica.com/api/v3/user", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-user": `${tokens.user}`,
-      "x-api-key": `${tokens.api}`,
-      "x-client": `${tokens.user}-Testing`
-    },
-    body: JSON.stringify(newStats)
-  });
-  document.getElementsByClassName("top-menu-icon svg-icon")[5].click();
-  console.log("The following stats were updated: ", await resp.json());
-};
-
-/* istanbul ignore next */
-const getStats = async () => {
-  try {
-    const resp = await fetch(
-      `https://habitica.com/api/v3/members/${tokens.user}`
-    );
-    const data = await resp.json();
-    const stats = data.data.stats;
-    return stats;
-  } catch (err) {
-    console.log("Caugth: ", err);
-  }
-};
-
-/* istanbul ignore next */
-const main = async () => {
-  try {
-    const stats = await exportFunctions.getStats();
-    const buttons = createButtons(customSkills, stats);
-    appendSkills(buttons);
-  } catch (err) {
-    console.log(err);
   }
 };
 
