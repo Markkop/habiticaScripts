@@ -36,12 +36,12 @@ const customSkills = [
   {
     name: "Midas Touch",
     imgSrc: "http://pixeljoint.com/files/icons/goldbar.png",
-    description: "Transmutes 30 gold coins by consuming mana and experience",
+    description: "Transmutes 10 gold coins by consuming mana and experience",
     statsChange: {
       hp: "0",
       mp: "-25M",
       exp: "-20M",
-      gp: "+30F"
+      gp: "+10F"
     }
   },
   {
