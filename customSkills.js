@@ -59,7 +59,7 @@ const customSkills = [
     }
   },
   {
-    name: "Find gold",
+    name: "Find Gold",
     imgSrc: "http://pixeljoint.com/files/icons/mh_coinzpreview.png",
     description: "Casts a power word that finds a random quantity of coins",
     statsChange: {
