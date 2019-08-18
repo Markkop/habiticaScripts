@@ -11,7 +11,8 @@
 // hp: "-10M" = Consumes 10% of max hp
 // mp: "-25C" = Consumes 25% of current mp
 // gp: "+30F" or "+30" = Adds 30 pieces of gold
-// So, M = max, C = current, F = flat
+// gp: "10R" = Adds a random number of gold between 1 and 10
+// So, M = max, C = current, F = flat, R = random (flat)
 
 // Replace with yours: https://habitica.com/user/settings/api
 const tokens = {
@@ -65,7 +66,7 @@ const customSkills = [
       hp: "+0",
       mp: "-5M",
       exp: "0",
-      gp: (Math.floor(Math.random() * 10) + 1).toString()
+      gp: "10R"
     }
   }
 ];
