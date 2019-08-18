@@ -58,14 +58,14 @@ const customSkills = [
     }
   },
   {
-    name: "Exiva gold",
+    name: "Find gold",
     imgSrc: "http://pixeljoint.com/files/icons/mh_coinzpreview.png",
-    description: "Casts a power word that finds coins (test skill)",
+    description: "Casts a power word that finds a random quantity of coins",
     statsChange: {
       hp: "+0",
-      mp: "-1",
+      mp: "-5M",
       exp: "0",
-      gp: "1"
+      gp: (Math.floor(Math.random() * 10) + 1).toString()
     }
   }
 ];
@@ -152,8 +152,12 @@ const createButtons = skills => {
 const onClickSkill = async skill => {
   const currentStats = await exportFunctions.getStats();
   const newStats = changeStats(skill, currentStats);
-  //Refactor so it doesn't PUT if it can't cast
-  await exportFunctions.putStats(newStats);
+  const isAbleToCast = checkRequirements(newStats, currentStats);
+  if (isAbleToCast) {
+    await exportFunctions.putStats(newStats);
+  } else {
+    console.log("Not able to cast the skill");
+  }
   return newStats;
 };
 
@@ -177,50 +181,75 @@ const appendSkills = buttons => {
   }
 };
 
-const changeStats = (skill, currentStats) => {
-  const newStats = Object.keys(skill.statsChange).map(stat => {
-    const object = exportFunctions.splitString(skill.statsChange[stat]);
-    if (!object.value) {
-      return currentStats[stat];
+const checkRequirements = (newStats, currentStats) => {
+  const newStatsKeys = Object.keys(newStats);
+
+  // There's probably some better way to write the following code
+  for (let i = 0; i < newStatsKeys.length; i++) {
+    let newStatValue = newStats[newStatsKeys[i]];
+    if (newStatValue < 0) {
+      const statBeingChecked = newStatsKeys[i].split(".")[1];
+      const message = `You require ${currentStats[statBeingChecked] +
+        newStatValue * -1}${statBeingChecked} to cast this skill`;
+      console.log(message);
+      alert(message);
+      return false;
     }
-    switch (object.type) {
+  }
+  return true;
+};
+
+const changeStats = (skill, currentStats) => {
+  const newStats = Object.keys(skill.statsChange).reduce((finalObj, stat) => {
+    const skillStat = exportFunctions.splitString(skill.statsChange[stat]);
+    const createStatObject = (stat, value) => {
+      switch (stat) {
+        case "hp":
+          return { "stats.hp": value };
+        case "mp":
+          return { "stats.mp": value };
+        case "exp":
+          return { "stats.exp": value };
+        case "gp":
+          return { "stats.gp": value };
+        default:
+          return new Error("wrong stat");
+      }
+    };
+    switch (skillStat.type) {
       case "M":
         const maxStat = currentStats[exportFunctions.selectMaxValues(stat)];
-        return (object.value / 100) * maxStat + currentStats[stat];
-      case "C":
-        return (object.value / 100 + 1) * currentStats[stat];
-      default:
-        return object.value + currentStats[stat];
-    }
-  });
-
-  const checkNewStats = newStats => {
-    for (let i = 0; i < newStats.length; i++) {
-      if (newStats[i] < 0) {
-        const label = ["hp", "mp", "exp", "gp"];
-        const message = `You require ${Math.round(
-          currentStats[label[i]] + newStats[i] * -1
-        )}${label[i]} to cast this skill`;
-        console.log(message);
-        alert(message);
         return {
-          "stats.hp": currentStats["hp"],
-          "stats.mp": currentStats["mp"],
-          "stats.exp": currentStats["exp"],
-          "stats.gp": currentStats["gp"]
+          ...finalObj,
+          ...createStatObject(
+            stat,
+            (skillStat.value / 100) * maxStat + currentStats[stat]
+          )
         };
-      }
+      case "C":
+        return {
+          ...finalObj,
+          ...createStatObject(
+            stat,
+            (skillStat.value / 100 + 1) * currentStats[stat]
+          )
+        };
+      case "R":
+        return {
+          ...finalObj,
+          ...createStatObject(
+            stat,
+            Math.floor(Math.random() * 10) + 1 + currentStats[stat]
+          )
+        };
+      default:
+        return {
+          ...finalObj,
+          ...createStatObject(stat, skillStat.value + currentStats[stat])
+        };
     }
-
-    return {
-      "stats.hp": newStats[0] || currentStats["hp"],
-      "stats.mp": newStats[1] || currentStats["mp"],
-      "stats.exp": newStats[2] || currentStats["exp"],
-      "stats.gp": newStats[3] || currentStats["gp"]
-    };
-  };
-
-  return checkNewStats(newStats);
+  }, {});
+  return newStats;
 };
 
 const selectMaxValues = stat => {
@@ -288,6 +317,7 @@ const exportFunctions = {
   onClickSkill,
   splitString,
   selectMaxValues,
+  checkRequirements,
   main
 };
 

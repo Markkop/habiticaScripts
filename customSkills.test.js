@@ -5,6 +5,11 @@ exportFunctions.putStats = jest.fn(() => {});
 exportFunctions.getStats = jest.fn(() => stats);
 window.alert = jest.fn(() => console.log("Alerted"));
 
+afterEach(() => {
+  exportFunctions.getStats.mockClear();
+  exportFunctions.putStats.mockClear();
+});
+
 const skills = [
   {
     name: "Soul Pact",
@@ -36,8 +41,28 @@ const skills = [
       exp: "0",
       gp: "-10"
     }
+  },
+  {
+    name: "Random Number",
+    imgSrc: "http://pixeljoint.com/files/icons/goldbar.png",
+    statsChange: {
+      hp: "0",
+      mp: "-5M",
+      exp: "0",
+      gp: (Math.floor(Math.random() * 5) + 1).toString()
+    }
   }
 ];
+
+const baseTestStats = {
+  hp: 30,
+  mp: 40,
+  exp: 50,
+  gp: 50,
+  maxHealth: 50,
+  maxMP: 100,
+  toNextLevel: 250
+};
 
 const stats = {
   hp: 30,
@@ -50,10 +75,10 @@ const stats = {
 };
 
 describe("createButtons", () => {
-  it("creates three buttons", () => {
+  it("creates the right quantity of buttons", () => {
     expect(exportFunctions.createButtons).toBeDefined();
     const buttons = exportFunctions.createButtons(skills, stats);
-    expect(buttons).toHaveLength(3);
+    expect(buttons).toHaveLength(skills.length);
   });
 
   it("it throws an error if no inputs are provided", () => {
@@ -72,21 +97,30 @@ describe("createButtons", () => {
     const buttons = exportFunctions.createButtons(skills, stats);
     buttons[0].click();
     expect(await exportFunctions.getStats).toHaveBeenCalled();
-    expect(await exportFunctions.putStats).toHaveBeenCalled();
+    //expect(await exportFunctions.putStats).toHaveBeenCalled();
   });
 });
 
 describe("changeStats", () => {
-  it("apply modifiers correctly", () => {
-    expect(exportFunctions.changeStats).toBeDefined();
-    const soulPactStats = exportFunctions.changeStats(skills[0], stats);
+  expect(exportFunctions.changeStats).toBeDefined();
+
+  it("applies a normal spell", () => {
+    const stats = {
+      ...baseTestStats
+    };
+    const skill = {
+      ...skills[0]
+    };
+    const soulPactStats = exportFunctions.changeStats(skill, stats);
     expect(soulPactStats).toStrictEqual({
       "stats.hp": 25,
       "stats.mp": 36,
       "stats.exp": 75,
       "stats.gp": 50
     });
+  });
 
+  it("applies midasTouch correctly", () => {
     const midasTouchStats = exportFunctions.changeStats(skills[1], stats);
     expect(midasTouchStats).toStrictEqual({
       "stats.hp": 30,
@@ -94,40 +128,42 @@ describe("changeStats", () => {
       "stats.exp": 45,
       "stats.gp": 55
     });
+  });
 
-    const highCostStats = exportFunctions.changeStats(skills[2], stats);
-    expect(highCostStats).toStrictEqual({
-      "stats.hp": stats.hp,
-      "stats.mp": stats.mp,
-      "stats.exp": stats.exp,
-      "stats.gp": stats.gp
-    });
-    expect(window.alert).toHaveBeenCalled();
+  // it("get negative values", () => {
+  //   const highCostStats = exportFunctions.changeStats(skills[2], stats);
+  //   expect(highCostStats).toStrictEqual({
+  //     "stats.hp": stats.hp,
+  //     "stats.mp": stats.mp,
+  //     "stats.exp": stats.exp,
+  //     "stats.gp": stats.gp
+  //   });
+  //   expect(window.alert).toHaveBeenCalled();
+  // });
+
+  it("accepts random numbers", () => {
+    const stats = {
+      ...baseTestStats,
+      gp: 0
+    };
+    const skill = {
+      statsChange: {
+        mp: "-5M",
+        gp: "10R"
+      }
+    };
+
+    const randomNumbers = exportFunctions.changeStats(skill, stats);
+
+    expect(randomNumbers["stats.gp"]).toBeGreaterThanOrEqual(1);
+    expect(randomNumbers["stats.gp"]).toBeLessThanOrEqual(10);
   });
 
   it("throws an error with wrong skill object", () => {
-    const wrongMpStat = exportFunctions.changeStats(
+    exportFunctions.changeStats(
       { statsChange: { hp: "-50M", sp: "30" } },
       stats
     );
-    expect(wrongMpStat).toStrictEqual({
-      "stats.hp": 5,
-      "stats.mp": 40,
-      "stats.exp": 50,
-      "stats.gp": 50
-    });
-    expect(exportFunctions.changeStats).toThrow();
-
-    const wrongObject = exportFunctions.changeStats(
-      { statsChange: { nothing: "at all" } },
-      stats
-    );
-    expect(wrongObject).toStrictEqual({
-      "stats.hp": stats.hp,
-      "stats.mp": stats.mp,
-      "stats.exp": stats.exp,
-      "stats.gp": stats.gp
-    });
     expect(exportFunctions.changeStats).toThrow();
   });
 });
@@ -153,13 +189,53 @@ describe("splitStatsChange", () => {
   });
 });
 
+describe("checkRequirements", () => {
+  it("returns true to correct stats", () => {
+    const ableToCast = exportFunctions.checkRequirements(
+      { "stats.hp": 30 },
+      { hp: 40 }
+    );
+    expect(ableToCast).toBe(true);
+  });
+
+  it("returns false to incorrect stats", () => {
+    const ableToCast = exportFunctions.checkRequirements(
+      { "stats.hp": -10 },
+      { hp: 60 }
+    );
+    expect(ableToCast).toBe(false);
+  });
+});
+
 describe("onClickSkill", () => {
-  it("calls mock functions", async () => {
+  it("calls get and put correctly", async () => {
     expect(exportFunctions.onClickSkill).toBeDefined();
-    exportFunctions.onClickSkill(skills[0]);
+    exportFunctions.onClickSkill({
+      statsChange: {
+        hp: "-10M",
+        mp: "-10C",
+        exp: "+10M",
+        gp: "0"
+      }
+    });
 
     expect(await exportFunctions.getStats).toHaveBeenCalled();
     expect(await exportFunctions.putStats).toHaveBeenCalled();
+  });
+
+  it("it doesn't call PUT because not enough mana", async () => {
+    expect(exportFunctions.onClickSkill).toBeDefined();
+    exportFunctions.onClickSkill({
+      statsChange: {
+        hp: "-10M",
+        mp: "-100M",
+        exp: "+10M",
+        gp: "0"
+      }
+    });
+
+    expect(await exportFunctions.getStats).toHaveBeenCalled();
+    expect(await exportFunctions.putStats).not.toHaveBeenCalled();
   });
 });
 
@@ -177,7 +253,7 @@ describe("appendSkills", () => {
 
     const buttons = exportFunctions.createButtons(skills, stats);
     const newSkillsDiv = exportFunctions.appendSkills(buttons);
-    expect(newSkillsDiv).toHaveLength(3);
+    expect(newSkillsDiv).toHaveLength(skills.length);
   });
 });
 
