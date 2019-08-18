@@ -31,7 +31,7 @@ const skills = [
     name: "High Cost",
     imgSrc: "http://pixeljoint.com/files/icons/goldbar.png",
     statsChange: {
-      hp: "-99M",
+      hp: "-98M",
       mp: "10",
       exp: "0",
       gp: "-10"
@@ -70,7 +70,7 @@ describe("createButtons", () => {
 
   it("clicks", async () => {
     const buttons = exportFunctions.createButtons(skills, stats);
-    console.log(buttons[0].click());
+    buttons[0].click();
     expect(await exportFunctions.getStats).toHaveBeenCalled();
     expect(await exportFunctions.putStats).toHaveBeenCalled();
   });
