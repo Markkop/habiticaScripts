@@ -49,7 +49,7 @@ const skills = [
       hp: "0",
       mp: "-5M",
       exp: "0",
-      gp: (Math.floor(Math.random() * 5) + 1).toString()
+      gp: "10R"
     }
   }
 ];
