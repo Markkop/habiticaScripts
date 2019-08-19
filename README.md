@@ -31,6 +31,8 @@ Run `npm test -- --coverage`
 <img src="https://i.imgur.com/3QvJFgd.png"/>
 <hr>
 <img src="https://i.imgur.com/kIjk9qB.png"/>
+<hr>
+<img src="https://i.imgur.com/BLkLpcj.png"/>
 
 ## Some references
 
