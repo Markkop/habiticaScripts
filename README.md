@@ -11,8 +11,8 @@ With this project I've been able to practice **Javascript, HTML, CSS, Testing an
 Install [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) / [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)  
 Click on its icon and `New user script`  
 Copy the content of [customSkills.js](https://github.com/Markkop/habiticaCustomSkills/blob/master/customSkills.js) and paste it  
-Change `userid` in the **tokens** function for your User Id (eg. 50387371-92ee-...)  
-Change `tokenapi` for your [Token Api](https://habitica.com/user/settings/api) (eg. cfd2a65e-a8bc-....)  
+Change `userid` in the **tokens** function for your User Id _(eg. 50387371-92ee-...)_  
+Change `tokenapi` for your [Token Api](https://habitica.com/user/settings/api) _(eg. cfd2a65e-a8bc-....)_  
 Reload your [Habitica](https://habitica.com/)'s home
 
 ## How to Test and Develop
