@@ -20,11 +20,12 @@ Reload your [Habitica](https://habitica.com/)'s home
 ```javascript
 // Instal dependencies
 npm install
-yarn
+
+// Serve dev.html with auto build and hot-reloading
+npm run dev
 
 // Transpile ES6 and JSX code
 npm run build
-yarn build
 ```
 
 # Progress History
