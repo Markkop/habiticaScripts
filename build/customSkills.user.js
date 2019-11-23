@@ -62,11 +62,14 @@ const customSkills = [{
 }];
 
 (function () {
-  var scriptElement = document.createElement('script');
-  scriptElement.type = 'text/javascript';
-  scriptElement.src = 'https://cdn.jsdelivr.net/npm/vue/dist/vue.js';
-  document.body.appendChild(scriptElement);
   setTimeout(() => {
+    var scriptElement = document.createElement('script');
+    scriptElement.type = 'text/javascript';
+    scriptElement.src = 'https://cdn.jsdelivr.net/npm/vue/dist/vue.js';
+    document.body.appendChild(scriptElement);
+  }, 100);
+  setTimeout(() => {
+    // Wait the page to fully render
     var spellContainer = document.getElementsByClassName('container spell-container')[0];
     var node = document.createElement('div');
     node.id = 'customSkills';
@@ -78,14 +81,8 @@ const customSkills = [{
       },
       render: function (h) {
         return h("div", {
-          "attrs": {
-            "data-v-8ab1912c": ""
-          },
           "class": "row"
         }, [h("div", {
-          "attrs": {
-            "data-v-8ab1912c": ""
-          },
           "class": "col-12 col-md-3"
         }, [h("div", {
           "class": "spell col-12 row"
@@ -93,7 +90,7 @@ const customSkills = [{
           "class": "col-8 details"
         }), h("p", {
           "class": "title"
-        }, ["Magia 1"]), h("div", {
+        }, [this.message]), h("div", {
           "class": "col-4 mana"
         }, [h("div", {
           "class": "img"

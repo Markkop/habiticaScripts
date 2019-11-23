@@ -2,16 +2,20 @@
   "name": "customskills",
   "version": "2.0.0",
   "description": "Create new skills on Habitica by changing custom values",
-  "main": "index.js",
+  "watch": {
+    "build": "src/*.js"
+  },
   "scripts": {
     "test": "jest",
-    "build": "babel src/customSkill.js --out-file build/customSkills.user.js"
+    "build": "babel src/customSkill.js --out-file build/customSkills.user.js",
+    "dev": "reload & npm-watch"
   },
   "author": "Mark",
   "license": "ISC",
   "devDependencies": {
     "jest": "^24.8.0",
-    "jest-fetch-mock": "^2.1.2"
+    "jest-fetch-mock": "^2.1.2",
+    "reload": "^3.0.3"
   },
   "dependencies": {
     "@babel/cli": "^7.7.0",
@@ -20,7 +24,8 @@
     "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
     "@vue/babel-preset-jsx": "^1.1.2",
     "babel-jest": "^24.8.0",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "npm-watch": "^0.6.0"
   },
   "jest": {
     "automock": false,

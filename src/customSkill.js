@@ -72,11 +72,15 @@ const customSkills = [
 ];
 
 (function() {
-  var scriptElement = document.createElement('script');
-  scriptElement.type = 'text/javascript';
-  scriptElement.src = 'https://cdn.jsdelivr.net/npm/vue/dist/vue.js';
-  document.body.appendChild(scriptElement);
   setTimeout(() => {
+    var scriptElement = document.createElement('script');
+    scriptElement.type = 'text/javascript';
+    scriptElement.src = 'https://cdn.jsdelivr.net/npm/vue/dist/vue.js';
+    document.body.appendChild(scriptElement);
+  }, 100);
+
+  setTimeout(() => {
+    // Wait the page to fully render
     var spellContainer = document.getElementsByClassName(
       'container spell-container'
     )[0];
@@ -92,11 +96,11 @@ const customSkills = [
       },
       render: function(h) {
         return (
-          <div data-v-8ab1912c="" class="row">
-            <div data-v-8ab1912c="" class="col-12 col-md-3">
+          <div class="row">
+            <div class="col-12 col-md-3">
               <div class="spell col-12 row">
                 <div class="col-8 details"></div>
-                <p class="title">Magia 1</p>
+                <p class="title">{this.message}</p>
                 <div class="col-4 mana">
                   <div class="img">
                     <p>Img</p>
