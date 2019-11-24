@@ -96,11 +96,46 @@ const customSkills = [
       },
       render: function(h) {
         return (
-          <div class="row">
+          <div class="row" style={rowStyle}>
             <div class="col-12 col-md-3">
               <div class="spell col-12 row">
                 <div class="col-8 details"></div>
-                <p class="title">{this.message}</p>
+                <p class="title" style={detailsStyle}>
+                  {this.message}
+                </p>
+                <div class="col-4 mana">
+                  <div class="img">
+                    <p>Img</p>
+                  </div>
+                </div>
+              </div>
+              <div class="spell col-12 row">
+                <div class="col-8 details"></div>
+                <p class="title" style={detailsStyle}>
+                  {this.message}
+                </p>
+                <div class="col-4 mana">
+                  <div class="img">
+                    <p>Img</p>
+                  </div>
+                </div>
+              </div>
+              <div class="spell col-12 row">
+                <div class="col-8 details"></div>
+                <p class="title" style={detailsStyle}>
+                  {this.message}
+                </p>
+                <div class="col-4 mana">
+                  <div class="img">
+                    <p>Img</p>
+                  </div>
+                </div>
+              </div>
+              <div class="spell col-12 row">
+                <div class="col-8 details"></div>
+                <p class="title" style={detailsStyle}>
+                  {this.message}
+                </p>
                 <div class="col-4 mana">
                   <div class="img">
                     <p>Img</p>
@@ -114,3 +149,13 @@ const customSkills = [
     });
   }, 3000);
 })();
+
+const detailsStyle = {
+  color: '#4eda57',
+};
+
+const rowStyle = {
+  display: 'flex',
+};
+
+// color: #4e4a57,

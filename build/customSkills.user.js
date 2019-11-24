@@ -81,7 +81,8 @@ const customSkills = [{
       },
       render: function (h) {
         return h("div", {
-          "class": "row"
+          "class": "row",
+          "style": rowStyle
         }, [h("div", {
           "class": "col-12 col-md-3"
         }, [h("div", {
@@ -89,7 +90,41 @@ const customSkills = [{
         }, [h("div", {
           "class": "col-8 details"
         }), h("p", {
-          "class": "title"
+          "class": "title",
+          "style": detailsStyle
+        }, [this.message]), h("div", {
+          "class": "col-4 mana"
+        }, [h("div", {
+          "class": "img"
+        }, [h("p", ["Img"])])])]), h("div", {
+          "class": "spell col-12 row"
+        }, [h("div", {
+          "class": "col-8 details"
+        }), h("p", {
+          "class": "title",
+          "style": detailsStyle
+        }, [this.message]), h("div", {
+          "class": "col-4 mana"
+        }, [h("div", {
+          "class": "img"
+        }, [h("p", ["Img"])])])]), h("div", {
+          "class": "spell col-12 row"
+        }, [h("div", {
+          "class": "col-8 details"
+        }), h("p", {
+          "class": "title",
+          "style": detailsStyle
+        }, [this.message]), h("div", {
+          "class": "col-4 mana"
+        }, [h("div", {
+          "class": "img"
+        }, [h("p", ["Img"])])])]), h("div", {
+          "class": "spell col-12 row"
+        }, [h("div", {
+          "class": "col-8 details"
+        }), h("p", {
+          "class": "title",
+          "style": detailsStyle
         }, [this.message]), h("div", {
           "class": "col-4 mana"
         }, [h("div", {
@@ -99,3 +134,10 @@ const customSkills = [{
     });
   }, 3000);
 })();
+
+const detailsStyle = {
+  color: '#4eda57'
+};
+const rowStyle = {
+  display: 'flex'
+}; // color: #4e4a57,

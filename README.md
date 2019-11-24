@@ -21,7 +21,7 @@ Reload your [Habitica](https://habitica.com/)'s home
 // Instal dependencies
 npm install
 
-// Serve dev.html with auto build and hot-reloading
+// Serve dev.html with auto build and hot-reloading on http://127.0.0.1:8080/src/dev.html
 npm run dev
 
 // Transpile ES6 and JSX code
