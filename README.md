@@ -1,5 +1,9 @@
 # habiticaCustomSkills
 
+## Status
+
+This script is currently broken and being worked on. If you're willing to help, send me a message!
+
 ## Motivation
 
 I've already used **Habitica** once and just started using it again to organize myself. However, I've been so focused that I quickly **outleveled my friends** and wondered how could I adjust my leveling process so I could keep up with the party.  
