@@ -1,0 +1,27 @@
+{
+  "name": "customskills",
+  "version": "0.0.1",
+  "description": "Create new skills on Habitica by changing custom values",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Mark",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^24.8.0",
+    "jest-fetch-mock": "^2.1.2"
+  },
+  "dependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "babel-jest": "^24.8.0",
+    "node-fetch": "^2.6.0"
+  },
+  "jest": {
+    "automock": false,
+    "setupFiles": [
+      "./setupJest.js"
+    ]
+  }
+}
