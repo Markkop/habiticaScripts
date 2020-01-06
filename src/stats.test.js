@@ -31,18 +31,20 @@ const changeStats = (changingStats, currentStats) => {
     return stats.reduce((newStats, stat) => {
         const { value, type } = changingStats[stat]
         const current = currentStats[stat]
+        const integer = Number(String(current).split('.')[0])
+        const decimal = String(current).split('.')[1]
         const max = currentStats[maxMap[stat]]
 
         const modifierMap = {
-            flat: current + value,
-            max: current + (max/100 * value),
-            current: current + (current/100 * value),
-            random: current + Math.floor(Math.random() * (value - 1)) + 1
+            flat: integer + value,
+            max: integer + (max/100 * value),
+            current: integer + (current/100 * value),
+            random: integer + Math.floor(Math.random() * (value - 1)) + 1
         }
 
         return {
             ...newStats,
-            ['stats.'+stat]: Math.round(modifierMap[type || 'flat'])
+            ['stats.'+stat]: Number(Math.round(modifierMap[type || 'flat']) + '.' + decimal)
         }
         
     }, {})
@@ -60,10 +62,10 @@ describe('Stat', () => {
         }
 
         const expectedStats = {
-            'stats.hp': 7,
-            'stats.mp': 310,
-            'stats.exp': 1005,
-            'stats.gp': 169
+            'stats.hp': 7.03646565806994,
+            'stats.mp': 310.2300000000001,
+            'stats.exp': 1005.4094671046499,
+            'stats.gp': 169.177552698031
         }
 
         const newStats = changeStats(spell.stats, mockedStats)
@@ -82,10 +84,10 @@ describe('Stat', () => {
         }
 
         const expectedStats = {
-            'stats.hp': 27,
-            'stats.mp': 339,
-            'stats.exp': 180,
-            'stats.gp': 181
+            'stats.hp': 27.03646565806994,
+            'stats.mp': 339.2300000000001,
+            'stats.exp': 180.4094671046499,
+            'stats.gp': 180.177552698031
         }
 
         const newStats = changeStats(spell.stats, mockedStats)
@@ -104,10 +106,10 @@ describe('Stat', () => {
         }
 
         const expectedStats = {
-            'stats.hp': 30,
-            'stats.mp': 330,
-            'stats.exp': 500,
-            'stats.gp': 172
+            'stats.hp': 30.03646565806994,
+            'stats.mp': 330.2300000000001,
+            'stats.exp': 500.4094671046499,
+            'stats.gp': 172.177552698031
         }
 
         const newStats = changeStats(spell.stats, mockedStats)
@@ -130,10 +132,10 @@ describe('Stat', () => {
         }
 
         const expectedStats = {
-            'stats.hp': 32,
-            'stats.mp': 305,
-            'stats.exp': 950,
-            'stats.gp': 189
+            'stats.hp': 32.03646565806994,
+            'stats.mp': 305.2300000000001,
+            'stats.exp': 950.4094671046499,
+            'stats.gp': 189.177552698031
         }
 
         const newStats = changeStats(spell.stats, mockedStats)
@@ -152,10 +154,10 @@ describe('Stat', () => {
         }
 
         const expectedStats = {
-            'stats.hp': 37,
-            'stats.mp': 300,
-            'stats.exp': 1000,
-            'stats.gp': 164,
+            'stats.hp': 37.03646565806994,
+            'stats.mp': 300.2300000000001,
+            'stats.exp': 1000.4094671046499,
+            'stats.gp': 164.177552698031,
         }
 
         const newStats = changeStats(spell.stats, mockedStats)
@@ -171,7 +173,7 @@ describe('Stat', () => {
         }
 
         const expectedStats = {
-            'stats.hp': 47,
+            'stats.hp': 47.03646565806994,
         }
 
         const newStats = changeStats(spell.stats, mockedStats)
@@ -189,7 +191,7 @@ describe('Checkrequirements', () => {
         return newStatsKeys.reduce((result, statKey) => {
             const stat = statKey.split('.')[1]
             const value = newStats[statKey]
-            const requiredValue = currentStats[stat] + value * -1
+            const requiredValue = (currentStats[stat] + value * -1).toFixed(2)
             const message = `You need ${requiredValue} ${stat} to cast this skill`
 
             if (value < 0) {

@@ -13,7 +13,7 @@
 const tokens = {
     user: '',
     api: '',
-  };
+};
   
 const customSkills = [
     {
@@ -113,18 +113,20 @@ const changeStats = (changingStats, currentStats) => {
     return stats.reduce((newStats, stat) => {
         const { value, type } = changingStats[stat]
         const current = currentStats[stat]
+        const integer = Number(String(current).split('.')[0])
+        const decimal = String(current).split('.')[1]
         const max = currentStats[maxMap[stat]]
 
         const modifierMap = {
-            flat: current + value,
-            max: current + (max/100 * value),
-            current: current + (current/100 * value),
-            random: current + Math.floor(Math.random() * (value - 1)) + 1
+            flat: integer + value,
+            max: integer + (max/100 * value),
+            current: integer + (current/100 * value),
+            random: integer + Math.floor(Math.random() * (value - 1)) + 1
         }
 
         return {
             ...newStats,
-            ['stats.'+stat]: Math.round(modifierMap[type || 'flat'])
+            ['stats.'+stat]: Number(Math.round(modifierMap[type || 'flat']) + '.' + decimal)
         }
         
     }, {})
@@ -137,7 +139,7 @@ const checkRequirements = (newStats, currentStats) => {
     return newStatsKeys.reduce((result, statKey) => {
         const stat = statKey.split('.')[1]
         const value = newStats[statKey]
-        const requiredValue = currentStats[stat] + value * -1
+        const requiredValue = (currentStats[stat] + value * -1).toFixed(2)
         const message = `You need ${requiredValue} ${stat} to cast this skill`
 
         if (value < 0) {
