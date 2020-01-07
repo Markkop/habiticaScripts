@@ -1,10 +1,5 @@
 # habiticaCustomSkills
 
-## Status
-
-**Version 2 has been launched!**  
-This script was my first javascript project and I've learned A LOT since then. It's been broken for a while and I decided to refactor it with my new learnings and with a different strategy: instead of creating all html elements by hand, I'm now cloning them from existing ones and changing the values I need.
-
 ## Motivation
 
 I've already used **Habitica** once and just started using it again to organize myself. However, I've been so focused that I quickly **outleveled my friends** and wondered how could I adjust my leveling process so I could keep up with the party.  
@@ -15,18 +10,17 @@ With this project I've been able to practice **Javascript, HTML, CSS, Testing an
 
 Install [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) / [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)  
 Click on its icon and `New user script`  
-Copy the content of [src/habiticaCustomSkills.user.js](src/habiticaCustomSkills) and paste on it  
-Add your `user` and `api` [tokens](https://habitica.com/user/settings/api) to the **tokens** object  
+Copy the content of [customSkills.js](https://github.com/Markkop/habiticaCustomSkills/blob/master/customSkills.js) and paste it  
+Change `userid` in the **tokens** function for your User Id _(eg. 50387371-92ee-...)_  
+Change `tokenapi` for your [Token Api](https://habitica.com/user/settings/api) _(eg. cfd2a65e-a8bc-....)_  
 Reload your [Habitica](https://habitica.com/)'s home
 
-## How to develop
+## How to Test and Develop
 
-Check [this guide](https://violentmonkey.github.io/posts/how-to-edit-scripts-with-your-favorite-editor/) to "live delevop" this script.
-
-To change `changeStats()` and `checkRequirements()` functions it is advised to alter them in the [test file](src/stats.test.js) while running it with `npm test`.  
-If some wrong value is sent to Habitica's API, your stat will be zeroed and this can result in unexpected results, like death.  
-Don't forget to copy your changed functions to **habiticaCustomSkills.user.js** file
-
+Access root folder (the same as package.json)  
+Run `npm install`  
+Run `npm test -- --watch`  
+Run `npm test -- --coverage`
 
 # Progress History
 
@@ -38,10 +32,7 @@ Don't forget to copy your changed functions to **habiticaCustomSkills.user.js** 
 <hr>
 <img src="https://i.imgur.com/kIjk9qB.png"/>
 <hr>
-<img src="https://i.imgur.com/Ndh6dJ9.png"/>
-
-[(Printscreen of old testing file)](https://i.imgur.com/BLkLpcj.png)
-
+<img src="https://i.imgur.com/BLkLpcj.png"/>
 
 ## Some references
 
