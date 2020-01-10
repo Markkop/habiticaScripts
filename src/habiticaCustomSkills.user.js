@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        habiticaCustomSkills
-// @version     2.0
+// @version     2.0.1
 // @description Create new habitica skills to modify user stats
 // @grant       none
 // @include     http*://habitica.com*
