@@ -22,11 +22,11 @@ const customSkills = [
             'https://www.pngix.com/pngfile/middle/48-486388_spell-book-icon-spellbook-icon-hd-png-download.png',
         description:
             'Sacrifices health and experience to recover 10% of your max mana',
-        stats: {
-            hp: { value: -20, type: 'max'},
-            mp: { value: +10, type: 'max'},
-            exp: { value: -40, type: 'max'},
-        },
+        stats: [
+            { resource: 'hp', value: -20, type: 'max'},
+            { resource: 'mp', value: +10, type: 'max'},
+            { resource: 'exp', value: -40, type: 'max'},
+        ],
     },
     {
         name: 'Midas Touch',
@@ -34,11 +34,11 @@ const customSkills = [
             'http://pixeljoint.com/files/icons/goldbar.png',
         description: 
             'Transmutes 10 gold coins by consuming mana and experience',
-        stats: {
-            mp: { value: -25, type: 'max'},
-            exp: { value: -20, type: 'max'},
-            gp: { value: +10, type: 'flat' }
-        }
+        stats: [
+            { resource: 'mp', value: -25, type: 'max'},
+            { resource: 'exp', value: -20, type: 'max'},
+            { resource: 'gp', value: +10, type: 'flat' }
+        ]
     },
     {
         name: 'Time Rewind',
@@ -46,11 +46,11 @@ const customSkills = [
             'https://www.pngix.com/pngfile/middle/185-1857051_stopwatch-comments-delay-clipart-transparent-hd-png-download.png',
         description:
             'Sends you back in time some moments ago consuming all your current experience and restoring 10% of your max health',
-        stats: {
-            hp: { value: +10, type: 'max'},
-            mp: { value: -70, type: 'max'},
-            exp: { value: -100, type: 'current'},
-        }
+        stats: [
+            { resource: 'hp', value: +10, type: 'max'},
+            { resource: 'mp', value: -70, type: 'max'},
+            { resource: 'exp', value: -100, type: 'current'},
+        ]
     },
     {
         name: 'Find Gold',
@@ -58,10 +58,10 @@ const customSkills = [
             'http://pixeljoint.com/files/icons/mh_coinzpreview.png',
         description: 
             'Casts a power word that finds a random quantity of coins',
-        stats: {
-            mp: { value: -5, type: 'max'},
-            gp: { value: +10, type: 'random' }
-        },
+        stats: [
+            { resource: 'mp', value: -5, type: 'max'},
+            { resource: 'gp', value: +10, type: 'random' }
+        ],
     },
 ];
 
@@ -86,6 +86,28 @@ const typeMap = {
     random: '?'
 }
 
+const imgStyle = {
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center',
+    backgroundSize: '30px 30px',
+    backgroundImage: imgSrc => `url('${imgSrc}')`
+}
+
+const costStyle = {
+    paddingTop: '0'
+}
+
+const costContainerStyle = {
+    display: 'flex',
+    flexFlow: 'column',
+    alignItems: 'center',
+    justifyContent: 'center'
+}
+
+const textStyle = {
+    color: stat => colorMap[stat]
+}
+
 const getStats = async () => {
     try {
       const resp = await fetch(
@@ -108,12 +130,10 @@ const changeStats = (changingStats, currentStats) => {
         gp: 'gp'
     }
 
-    const stats = Object.keys(changingStats)
-
-    return stats.reduce((newStats, stat) => {
-        const { value, type } = changingStats[stat]
-        const current = currentStats[stat]
-        const max = currentStats[maxMap[stat]]
+    return changingStats.reduce((newStats, stat) => {
+        const { resource, value, type } = stat
+        const current = currentStats[resource]
+        const max = currentStats[maxMap[resource]]
 
         const modifierMap = {
             flat: current + value,
@@ -124,7 +144,7 @@ const changeStats = (changingStats, currentStats) => {
 
         return {
             ...newStats,
-            ['stats.'+stat]: Math.round(modifierMap[type || 'flat'])
+            ['stats.'+resource]: Math.round(modifierMap[type || 'flat'])
         }
         
     }, {})
@@ -165,89 +185,98 @@ const putStats = async newStats => {
     document.querySelector('[role=link]').click()
 };
 
+function setSpellTitle(spell, name) {
+    const title = spell.querySelector('.title')
+    title.innerText = name
+    return title
+}
 
-// To do: split this function in more functions
-// To do: change firstElementChild to something better
-// To do: refactor style insertion
-function createSpells() {
-    const spellContainer = document.querySelector('.spell-container')
-    const spellRow = spellContainer.firstElementChild
-    const existingSpell = spellRow.firstElementChild
+function setSpellIcon(spell, style, imgSrc) {
+    const img =  spell.querySelector('.img')
+    setStylesOnElement(img, style, imgSrc)
+    return img
+}
+
+function cloneAndEditCost({ resource, value, type }) {
+    if (value >= 0) {
+        return
+    }
+
+    const cost = this.querySelector('.mana-text')
+    const newCost = cost.cloneNode(true)
+    newCost.style.color = colorMap[resource]
     
-    customSkills.forEach(spell => {
-        const newSpell = existingSpell.cloneNode(true)
+    setStylesOnElement(newCost, costStyle)
 
-        // Spell title
-        const title = newSpell.querySelector('.title')
-        title.innerText = spell.name
+    const [ costIcon, costText ] = newCost.children
+    costIcon.innerHTML = iconMap[resource]
+    costText.innerText = value + typeMap[type]
+    setStylesOnElement(costText, textStyle, resource)
+    
+    this.appendChild(newCost)
+}
 
-        // Spell image
-        const img =  newSpell.querySelector('.img')
-        img.style.backgroundImage = `url('${spell.imgSrc}')`
-        img.style.backgroundRepeat = 'no-repeat'
-        img.style.backgroundPosition = 'center'
-        img.style.backgroundSize = '30px 30px'
 
-        // Spell costs
-        const resources = newSpell.querySelector('.mana')
-        resources.style.display = 'flex'
-        resources.style.flexFlow = 'column'
-        resources.style.alignItems = 'center'
-        resources.style.justifyContent = 'center'
-        const mana = newSpell.querySelector('.mana-text')
-        resources.removeChild(mana)
+function setSpellCosts(spell, style, stats) {
+    const costContainer = spell.querySelector('.mana')
+    setStylesOnElement(costContainer, style)
 
-        const spellStats = Object.keys(spell.stats)
-        spellStats.forEach(stat => {
-            const value = spell.stats[stat].value
-            const type = spell.stats[stat].type
+    stats.forEach(cloneAndEditCost, costContainer)
 
-            if (value >= 0) {
-                return
-            }
+    const originalCost = costContainer.querySelector('.mana-text')
+    costContainer.removeChild(originalCost)
+    return costContainer
+}
 
-            const newStat = mana.cloneNode(true)
-            newStat.style.paddingTop = '0'
-
-            const costIcon = newStat.firstElementChild
-            costIcon.innerHTML = iconMap[stat]
-
-            const costText = newStat.lastElementChild
-            costText.innerText = value + typeMap[type]
-            costText.style.color = colorMap[stat]
-            
-            resources.appendChild(newStat)
-        })
-
-        // Spell behavior
-        const spellButton = newSpell.firstElementChild
-        spellButton.onclick = async () => {
-            const currentStats = await getStats()
-            const newStats = changeStats(spell.stats, currentStats)
-            const canCastSpell = checkRequirements(newStats, currentStats)
-
-            if (canCastSpell) {
-                await putStats(newStats)
-            }
-
+function setStylesOnElement(element, style, options) {
+    const styles = Object.entries(style)
+    const resolvedStyle = styles.reduce((resolvedStyle, [ key, value ]) => {
+        const isFunction = typeof value === 'function'
+        return {
+            ...resolvedStyle,
+            [key]: isFunction? value(options) : value
         }
+    }, {})
 
-        spellRow.appendChild(newSpell)
-    })
-    
+    return Object.assign(element.style, resolvedStyle);
 }
 
 function main() {
     try {
         console.log('Starting habiticaCustomSkills script')
 
-        if (!tokens.api || !tokens.user) {
-            alert('habiticaCustomSkills script: No tokens found, did you forget to insert them?')
-            return
-        }
 
-        // To do: split createSpells() into more functions
-        createSpells()
+        const spellContainer = document.querySelector('.spell-container')
+        const spellRow = spellContainer.firstElementChild
+        const existingSpell = spellRow.firstElementChild
+        
+        customSkills.forEach(spell => {
+            const { name, imgSrc, description, stats, } = spell
+            
+            let newSpell = existingSpell.cloneNode(true)
+            setSpellTitle(newSpell, name)
+            setSpellIcon(newSpell, imgStyle, imgSrc)
+            setSpellCosts(newSpell, costContainerStyle, stats)
+    
+            // Spell behavior
+            const spellButton = newSpell.firstElementChild
+            spellButton.onclick = async () => {
+                if (!tokens.api || !tokens.user) {
+                    return alert('habiticaCustomSkills script: No tokens found, did you forget to insert them?')
+                }
+
+                const currentStats = await getStats()
+                const newStats = changeStats(spell.stats, currentStats)
+                const canCastSpell = checkRequirements(newStats, currentStats)
+    
+                if (canCastSpell) {
+                    await putStats(newStats)
+                }
+    
+            }
+    
+            spellRow.appendChild(newSpell)
+        })
     } catch (error) {
         console.log(error)
     }
