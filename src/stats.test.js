@@ -5,46 +5,41 @@ const mockedStats = {
     mp: 300.2300000000001,
     exp: 1000.4094671046499,
     gp: 164.177552698031,
-    lvl: 60,
-    class: "wizard",
-    points: 0,
-    str: 0,
-    con: 5,
-    int: 55,
-    per: 0,
     toNextLevel: 1640,
     maxHealth: 50,
     maxMP: 390
 }
 
 // Remember to copy/paste this function if changed on user.js file
-const changeStats = (changingStats, currentStats) => {
-    const maxMap = {
+const settings = {
+    max: {
         hp: 'maxHealth',
         mp: 'maxMP',
         exp: 'toNextLevel',
         gp: 'gp'
     }
+}
 
-    const stats = Object.keys(changingStats)
-
-    return stats.reduce((newStats, stat) => {
-        const { value, type } = changingStats[stat]
-        const current = currentStats[stat]
+const changeStats = (modifiers, currentStats) => {
+    return modifiers.reduce((newStats, modifier) => {
+        const { resource, factor, type } = modifier
+        const current = currentStats[resource]
         const integer = Number(String(current).split('.')[0])
         const decimal = String(current).split('.')[1]
-        const max = currentStats[maxMap[stat]]
+        const max = currentStats[settings.max[resource]]
 
-        const modifierMap = {
-            flat: integer + value,
-            max: integer + (max/100 * value),
-            current: integer + (current/100 * value),
-            random: integer + Math.floor(Math.random() * (value - 1)) + 1
+        const newValue = {
+            flat: integer + factor,
+            max: integer + (max/100 * factor),
+            current: integer + (current/100 * factor),
+            random: integer + Math.floor(Math.random() * (factor - 1)) + 1
         }
+
+        const newStat = Math.round(newValue[type || 'flat'])
 
         return {
             ...newStats,
-            ['stats.'+stat]: Number(Math.round(modifierMap[type || 'flat']) + '.' + decimal)
+            ['stats.'+resource]: Number(newStat + '.' + decimal)
         }
         
     }, {})
@@ -53,12 +48,12 @@ const changeStats = (changingStats, currentStats) => {
 describe('Stat', () => {
     test('is changed correctly with flat modifiers', () => {
         const spell = {
-            stats: {
-                hp: { value: -30, type: 'flat'},
-                mp: { value: +10, type: 'flat'},
-                exp: { value: 5, type: 'flat'},
-                gp: { value: +5 }
-            }
+            modifiers: [
+                 { resource: 'hp', factor: -30, type: 'flat'},
+                 { resource: 'mp', factor: +10, type: 'flat'},
+                 { resource: 'exp', factor: 5, type: 'flat'},
+                 { resource: 'gp', factor: +5 }
+            ]
         }
 
         const expectedStats = {
@@ -68,19 +63,19 @@ describe('Stat', () => {
             'stats.gp': 169.177552698031
         }
 
-        const newStats = changeStats(spell.stats, mockedStats)
+        const newStats = changeStats(spell.modifiers, mockedStats)
 
         expect(newStats).toEqual(expectedStats)
     })
 
     test('is changed correctly with max modifiers', () => {
         const spell = {
-            stats: {
-                hp: { value: -20, type: 'max'},
-                mp: { value: +10, type: 'max'},
-                exp: { value: -50, type: 'max'},
-                gp: { value: +10, type: 'max' }
-            }
+            modifiers: [
+                 { resource: 'hp', factor: -20, type: 'max'},
+                 { resource: 'mp', factor: +10, type: 'max'},
+                 { resource: 'exp', factor: -50, type: 'max'},
+                 { resource: 'gp', factor: +10, type: 'max' }
+            ]
         }
 
         const expectedStats = {
@@ -90,19 +85,19 @@ describe('Stat', () => {
             'stats.gp': 180.177552698031
         }
 
-        const newStats = changeStats(spell.stats, mockedStats)
+        const newStats = changeStats(spell.modifiers, mockedStats)
 
         expect(newStats).toEqual(expectedStats)
     })
 
     test('is changed correctly with current modifiers', () => {
         const spell = {
-            stats: {
-                hp: { value: -20, type: 'current'},
-                mp: { value: +10, type: 'current'},
-                exp: { value: -50, type: 'current'},
-                gp: { value: +5, type: 'current' }
-            }
+            modifiers: [
+                 { resource: 'hp', factor: -20, type: 'current'},
+                 { resource: 'mp', factor: +10, type: 'current'},
+                 { resource: 'exp', factor: -50, type: 'current'},
+                 { resource: 'gp', factor: +5, type: 'current' }
+            ]
         }
 
         const expectedStats = {
@@ -112,7 +107,7 @@ describe('Stat', () => {
             'stats.gp': 172.177552698031
         }
 
-        const newStats = changeStats(spell.stats, mockedStats)
+        const newStats = changeStats(spell.modifiers, mockedStats)
 
         expect(newStats).toEqual(expectedStats)
     })
@@ -123,12 +118,12 @@ describe('Stat', () => {
         global.Math = mockMath;
 
         const spell = {
-            stats: {
-                hp: { value: -10, type: 'random'},
-                mp: { value: +10, type: 'random'},
-                exp: { value: -100, type: 'random'},
-                gp: { value: +50, type: 'random' }
-            }
+            modifiers: [
+                 { resource: 'hp', factor: -10, type: 'random'},
+                 { resource: 'mp', factor: +10, type: 'random'},
+                 { resource: 'exp', factor: -100, type: 'random'},
+                 { resource: 'gp', factor: +50, type: 'random' }
+            ]
         }
 
         const expectedStats = {
@@ -138,19 +133,19 @@ describe('Stat', () => {
             'stats.gp': 189.177552698031
         }
 
-        const newStats = changeStats(spell.stats, mockedStats)
+        const newStats = changeStats(spell.modifiers, mockedStats)
 
         expect(newStats).toEqual(expectedStats)
     })
 
     test('remains equal if modifier value is zero', () => {
         const spell = {
-            stats: {
-                hp: { value: 0, type: 'flat'},
-                mp: { value: 0, type: 'max'},
-                exp: { value: 0, type: 'current'},
-                gp: { value: 0, type: 'random' }
-            }
+            modifiers: [
+                 { resource: 'hp', factor: 0, type: 'flat'},
+                 { resource: 'mp', factor: 0, type: 'max'},
+                 { resource: 'exp', factor: 0, type: 'current'},
+                 { resource: 'gp', factor: 0, type: 'random' }
+            ]
         }
 
         const expectedStats = {
@@ -160,23 +155,23 @@ describe('Stat', () => {
             'stats.gp': 164.177552698031,
         }
 
-        const newStats = changeStats(spell.stats, mockedStats)
+        const newStats = changeStats(spell.modifiers, mockedStats)
 
         expect(newStats).toEqual(expectedStats)
     })
 
     test('is changed when only one modifier is provided', () => {
         const spell = {
-            stats: {
-                hp: { value: +10, type: 'flat'},
-            }
+            modifiers: [
+                 {resource: 'hp', factor: +10, type: 'flat'},
+            ]
         }
 
         const expectedStats = {
             'stats.hp': 47.03646565806994,
         }
 
-        const newStats = changeStats(spell.stats, mockedStats)
+        const newStats = changeStats(spell.modifiers, mockedStats)
 
         expect(newStats).toEqual(expectedStats)
     })
@@ -186,22 +181,21 @@ describe('Checkrequirements', () => {
     window.alert = () => {}
 
     const checkRequirements = (newStats, currentStats) => {
-        const newStatsKeys = Object.keys(newStats);
+        const newStatsPairs = Object.entries(newStats);
       
-        return newStatsKeys.reduce((result, statKey) => {
-            const stat = statKey.split('.')[1]
-            const value = newStats[statKey]
-            const requiredValue = (currentStats[stat] + value * -1).toFixed(2)
+        return newStatsPairs.reduce((result, [key, value]) => {
+            const stat = key.split('.')[1]
+            const requiredValue = currentStats[stat] + value * -1
             const message = `You need ${requiredValue} ${stat} to cast this skill`
-
+    
             if (value < 0) {
                 console.log(message)
                 alert(message)
                 return false
             }
-
+    
             return result
-
+    
         }, true)
     };
 
