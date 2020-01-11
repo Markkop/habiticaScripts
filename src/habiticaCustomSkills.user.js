@@ -1,13 +1,19 @@
 // ==UserScript==
 // @name        habiticaCustomSkills
-// @version     2.0.1
+// @version     2.0.2
 // @description Create new habitica skills to modify user stats
 // @grant       none
 // @include     http*://habitica.com*
 // @run-at 	    document-idle
 // ==/UserScript==
 
-// To do: first cast is taking decimal stat values into account; make it ignore them
+// To Do list:
+// - Set linter and formating rules
+// - setSpellDescription()
+// - A webpack to split code into files
+// - Configure CircleCI
+// - Visual interface to change custom skills
+// - More tests
 
 /************
  ** SKILLS **
@@ -158,6 +164,14 @@ const style = `
  */
 
 /**
+ * @typedef ValidStats
+ * @property { number } [stats.hp]
+ * @property { number } [stats.mp]
+ * @property { number } [stats.exp]
+ * @property { number } [stats.gp]
+ */
+
+/**
  * @typedef ChangedStats
  * @property { number } [stats.hp]
  * @property { number } [stats.mp]
@@ -194,8 +208,10 @@ setTimeout(main, 3000)
  */
 function createSpell(spell) {
     const { name, imgSrc, description, modifiers, } = spell
+
     const spellCard = this.cloneNode(true)
     spellCard.classList.add('newSpell')
+
     setSpellTitle(spellCard, name)
     // To do: setSpellDescription
     setSpellIcon(spellCard, imgSrc)
@@ -244,15 +260,16 @@ const getStats = async () => {
 const putStats = async newStats => {
     try {
         const statsEntries = Object.entries(newStats)
+        const { tokens } = settings
         const validStats = statsEntries.reduce(validateStats, {}) 
     
         const response = await fetch('https://habitica.com/api/v3/user', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-user': `${settings.tokens.user}`,
-            'x-api-key': `${settings.tokens.api}`,
-            'x-client': `${settings.tokens.user}-Testing`,
+            'x-api-user': `${tokens.user}`,
+            'x-api-key': `${tokens.api}`,
+            'x-client': `${tokens.user}-Testing`,
           },
           body: JSON.stringify(validStats),
         });
@@ -273,14 +290,18 @@ const putStats = async newStats => {
 
  /**
   * Validate and return stats
-  * @param {*} stats 
-  * @param {*} param1 
+  * @param { ValidStats } stats 
+  * @param { String } resource
+  * @param { String } amount
+  * @returns { ValidStats }
   */
-function validateStats(stats, [ key, value ]) {
-    const isNumber = typeof value === 'number'
+function validateStats(stats, [ resource, amount ]) {
+    const { defaultStats } = settings
+    const isNumber = typeof amount === 'number'
+    const defaults = defaultStats[resource]
     return {
         ...stats,
-        ['stats.'+key]: isNumber ? value : settings.default[key]
+        ['stats.'+resource]: isNumber ? amount : defaults
     }
 }
 
@@ -372,9 +393,7 @@ function setSpellIcon(spell, imgSrc) {
  */
 function setSpellCosts(spell, modifier) {
     const costContainer = spell.querySelector('.mana')
-
     modifier.forEach(cloneAndEditCost, costContainer)
-
     const originalCost = costContainer.querySelector('.mana-text')
     costContainer.removeChild(originalCost)
 }
@@ -385,7 +404,7 @@ function setSpellCosts(spell, modifier) {
  * @param { HTMLDivElement } spell 
  * @param { SpellModifier } stats 
  */
-function setSpellBehavior (spell, { name, modifiers}) {
+function setSpellBehavior (spell, { name, modifiers }) {
     const spellButton = spell.firstElementChild
     spellButton.onclick = async () => {
         const { tokens, defaultStats } = settings
@@ -397,9 +416,8 @@ function setSpellBehavior (spell, { name, modifiers}) {
         
         if (!canCastSpell) {
             return logs(`Failed to cast ${name}: not enough resources.`,
-                {modifiers},  {currentStats}, {newStats})
+                {modifiers}, {currentStats}, {newStats})
         }
-        
         
         if(!hasCredentials) {
             return logs(`Failed to cast ${name}: no tokens found.`, 
@@ -423,18 +441,19 @@ function setSpellBehavior (spell, { name, modifiers}) {
  * @context { HTMLDivElement } costContainer
  */
 function cloneAndEditCost({ resource, factor, type }) {
+    const { color, icon, symbol } = settings
     if (factor >= 0) {
         return
     }
 
     const cost = this.querySelector('.mana-text')
     const newCost = cost.cloneNode(true)
-    newCost.style.color = settings.color[resource]
+    newCost.style.color = color[resource]
     
     const [ costIcon, costText ] = newCost.children
-    costIcon.innerHTML = settings.icon[resource]
-    costText.innerText = factor + settings.symbol[type]
-    costText.style.color = settings.color[resource]
+    costIcon.innerHTML = icon[resource]
+    costText.innerText = factor + symbol[type]
+    costText.style.color = color[resource]
     
     this.appendChild(newCost)
 }
@@ -450,7 +469,6 @@ function cloneAndEditCost({ resource, factor, type }) {
 function setDocumentStyle(styleSheet) {
     const lines = styleSheet.replace(/\,/g, '').match(/(.+)+/g)
     const rules = lines.reduce(parseStyleSheet, [])
-    
     const style = document.createElement('style');
     document.head.appendChild(style);
     rules.forEach(addStyleSheetRule, style)
