@@ -173,10 +173,10 @@ const style = `
 
 /**
  * @typedef ChangedStats
- * @property { number } [stats.hp]
- * @property { number } [stats.mp]
- * @property { number } [stats.exp]
- * @property { number } [stats.gp]
+ * @property { number } [hp]
+ * @property { number } [mp]
+ * @property { number } [exp]
+ * @property { number } [gp]
  */
 
 /**********
