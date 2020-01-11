@@ -13,7 +13,7 @@
 const tokens = {
     user: '',
     api: '',
-};
+  };
   
 const customSkills = [
     {
@@ -86,27 +86,29 @@ const typeMap = {
     random: '?'
 }
 
-const imgStyle = {
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center',
-    backgroundSize: '30px 30px',
-    backgroundImage: imgSrc => `url('${imgSrc}')`
+const style = `
+.row {
+background-color: black
 }
 
-const costStyle = {
-    paddingTop: '0'
+.details .img {
+background-repeat: no-repeat,
+background-position: center,
+background-size: 30px 30px
 }
 
-const costContainerStyle = {
-    display: 'flex',
-    flexFlow: 'column',
-    alignItems: 'center',
-    justifyContent: 'center'
+.spell .mana-text {
+padding-top: 0
 }
 
-const textStyle = {
-    color: stat => colorMap[stat]
+.mana {
+display: flex,
+flex-flow: column,
+align-items: center,
+justify-content: center
 }
+`;
+
 
 const getStats = async () => {
     try {
@@ -134,11 +136,12 @@ const changeStats = (changingStats, currentStats) => {
         const { resource, value, type } = stat
         const current = currentStats[resource]
         const max = currentStats[maxMap[resource]]
+
         const modifierMap = {
-            flat: integer + value,
-            max: integer + (max/100 * value),
-            current: integer + (current/100 * value),
-            random: integer + Math.floor(Math.random() * (value - 1)) + 1
+            flat: current + value,
+            max: current + (max/100 * value),
+            current: current + (current/100 * value),
+            random: current + Math.floor(Math.random() * (value - 1)) + 1
         }
 
         return {
@@ -156,7 +159,7 @@ const checkRequirements = (newStats, currentStats) => {
     return newStatsKeys.reduce((result, statKey) => {
         const stat = statKey.split('.')[1]
         const value = newStats[statKey]
-        const requiredValue = (currentStats[stat] + value * -1).toFixed(2)
+        const requiredValue = currentStats[stat] + value * -1
         const message = `You need ${requiredValue} ${stat} to cast this skill`
 
         if (value < 0) {
@@ -190,9 +193,9 @@ function setSpellTitle(spell, name) {
     return title
 }
 
-function setSpellIcon(spell, style, imgSrc) {
+function setSpellIcon(spell, imgSrc) {
     const img =  spell.querySelector('.img')
-    setStylesOnElement(img, style, imgSrc)
+    img.style.backgroundImage = `url('${imgSrc}')`
     return img
 }
 
@@ -204,21 +207,21 @@ function cloneAndEditCost({ resource, value, type }) {
     const cost = this.querySelector('.mana-text')
     const newCost = cost.cloneNode(true)
     newCost.style.color = colorMap[resource]
+    // To fix:
+    // .mana-text { padding-top: 0 } rule is being ignored
+    newCost.style.paddingTop = 0 
     
-    setStylesOnElement(newCost, costStyle)
-
     const [ costIcon, costText ] = newCost.children
     costIcon.innerHTML = iconMap[resource]
     costText.innerText = value + typeMap[type]
-    setStylesOnElement(costText, textStyle, resource)
+    costText.style.color = colorMap[resource]
     
     this.appendChild(newCost)
 }
 
 
-function setSpellCosts(spell, style, stats) {
+function setSpellCosts(spell, stats) {
     const costContainer = spell.querySelector('.mana')
-    setStylesOnElement(costContainer, style)
 
     stats.forEach(cloneAndEditCost, costContainer)
 
@@ -227,55 +230,76 @@ function setSpellCosts(spell, style, stats) {
     return costContainer
 }
 
-function setStylesOnElement(element, style, options) {
-    const styles = Object.entries(style)
-    const resolvedStyle = styles.reduce((resolvedStyle, [ key, value ]) => {
-        const isFunction = typeof value === 'function'
-        return {
-            ...resolvedStyle,
-            [key]: isFunction? value(options) : value
-        }
-    }, {})
+function addStyleSheetRule(rule) {
+    this.sheet.insertRule(rule, this.sheet.cssRules.length)
+}
 
-    return Object.assign(element.style, resolvedStyle);
+function parseStyleSheet(rules,line) {
+    if (line[0] === '}') {
+        return rules
+    }
+
+    if (line.includes('{')) {
+        return rules.concat(line)
+    }
+
+    
+    const previousRule = rules[rules.length - 1] 
+    const selector = previousRule.split('{')[0]
+    if (!previousRule.includes('}')) {
+        rules[rules.length - 1] = previousRule + line + '}'
+        return rules
+    }
+
+    return rules.concat(selector + ' {' + line + '}')
+}
+
+function setDocumentStyle(styleSheet) {
+    const lines = styleSheet.replace(/\,/g, '').match(/(.+)+/g)
+    const rules = lines.reduce(parseStyleSheet, [])
+    
+    const style = document.createElement('style');
+    document.head.appendChild(style);
+    rules.forEach(addStyleSheetRule, style)
+}
+
+function setSpellBehavior (spell, stats) {
+    const spellButton = spell.firstElementChild
+    spellButton.onclick = async () => {
+        if (!tokens.api || !tokens.user) {
+            return alert('habiticaCustomSkills script: No tokens found, did you forget to insert them?')
+        }
+
+        const currentStats = await getStats()
+        const newStats = changeStats(stats, currentStats)
+        const canCastSpell = checkRequirements(newStats, currentStats)
+
+        if (canCastSpell) {
+            await putStats(newStats)
+        }
+    }
 }
 
 function main() {
     try {
         console.log('Starting habiticaCustomSkills script')
-
-
-        const spellContainer = document.querySelector('.spell-container')
-        const spellRow = spellContainer.firstElementChild
-        const existingSpell = spellRow.firstElementChild
+        setDocumentStyle(style)
+        const spellRow = document.querySelector('.spell-container .row')
+        const spellCard = spellRow.firstChild
         
-        customSkills.forEach(spell => {
-            const { name, imgSrc, description, stats, } = spell
+        customSkills.forEach(customSpell => {
+            const { name, imgSrc, description, stats, } = customSpell
             
-            let newSpell = existingSpell.cloneNode(true)
-            setSpellTitle(newSpell, name)
-            setSpellIcon(newSpell, imgStyle, imgSrc)
-            setSpellCosts(newSpell, costContainerStyle, stats)
+            const spell = spellCard.cloneNode(true)
+            setSpellTitle(spell, name)
+            // To do: setSpellDescription
+            setSpellIcon(spell, imgSrc)
+            setSpellCosts(spell, stats)
+            setSpellBehavior(spell, stats)
     
-            // Spell behavior
-            const spellButton = newSpell.firstElementChild
-            spellButton.onclick = async () => {
-                if (!tokens.api || !tokens.user) {
-                    return alert('habiticaCustomSkills script: No tokens found, did you forget to insert them?')
-                }
-
-                const currentStats = await getStats()
-                const newStats = changeStats(spell.stats, currentStats)
-                const canCastSpell = checkRequirements(newStats, currentStats)
-    
-                if (canCastSpell) {
-                    await putStats(newStats)
-                }
-    
-            }
-    
-            spellRow.appendChild(newSpell)
+            spellRow.appendChild(spell)
         })
+        
     } catch (error) {
         console.log(error)
     }
