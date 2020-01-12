@@ -11,21 +11,21 @@ I've already used **Habitica** once and just started using it again to organize 
 That's how this project begins. By **consuming experience points** while using skills, I could slow down my leveling in exchange for other resources such hp, mana and gold. The challenging part here is to balance them correctly so these custom skills don't become too overpowered.  
 With this project I've been able to practice **Javascript, HTML, CSS, Testing and Functional Programming skills**.
 
-## How to Use
+## How to Use Habitica Custom Skills
 
-Install [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) / [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)  
-Click on its icon and `New user script`  
-Copy the content of [src/habiticaCustomSkills.user.js](src/habiticaCustomSkills) and paste on it  
-Add your `user` and `api` [tokens](https://habitica.com/user/settings/api) to the **tokens** object  
-Reload your [Habitica](https://habitica.com/)'s home
+1. Install [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) / [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)  
+2. Click on its icon and `New user script`  
+3. Copy the content of [src/habiticaCustomSkills.user.js](src/habiticaCustomSkills) and paste on it  
+4. Add your `user` and `api` [tokens](https://habitica.com/user/settings/api) to the **tokens** object  
+5. Reload your [Habitica](https://habitica.com/)'s home
 
 ## How to develop
 
 Check [this guide](https://violentmonkey.github.io/posts/how-to-edit-scripts-with-your-favorite-editor/) to "live delevop" this script.
 
-To change `changeStats()` and `checkRequirements()` functions it is advised to alter them in the [test file](src/stats.test.js) while running it with `npm test`.  
-If some wrong value is sent to Habitica's API, your stat will be zeroed and this can result in unexpected results, like death.  
-Don't forget to copy your changed functions to **habiticaCustomSkills.user.js** file
+* To change `changeStats()` and `checkRequirements()` functions it is advised to alter them in the [test file](src/stats.test.js) while running it with `npm test`.  
+* If some wrong value is sent to Habitica's API, your stat will be zeroed and this can result in unexpected results, like death.  
+* Don't forget to copy your changed functions to **habiticaCustomSkills.user.js** file
 
 
 # Progress History
@@ -37,6 +37,8 @@ Don't forget to copy your changed functions to **habiticaCustomSkills.user.js** 
 <img src="https://i.imgur.com/3QvJFgd.png"/>
 <hr>
 <img src="https://i.imgur.com/kIjk9qB.png"/>
+<hr>
+<img src="https://i.imgur.com/HMcUVEq.png"/>
 <hr>
 <img src="https://i.imgur.com/Ndh6dJ9.png"/>
 

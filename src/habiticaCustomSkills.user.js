@@ -57,14 +57,15 @@ const customSkills = [
         ]
     },
     {
-        name: 'Find Gold',
+        name: 'Throw a Coin',
         imgSrc: 
-            'http://pixeljoint.com/files/icons/mh_coinzpreview.png',
+            'https://cdn.iconscout.com/icon/premium/png-256-thumb/water-fountain-1840249-1560151.png',
         description: 
-            'Casts a power word that finds a random quantity of coins',
+            'Try your luck by throwing a coin the fountain.',
         modifiers: [
-            { resource: 'mp', factor: -5, type: 'max'},
-            { resource: 'gp', factor: +10, type: 'random' }
+            { resource: 'gp', factor: -5, type: 'flat'},
+            { resource: 'mp', factor: +10, type: 'random' },
+            { resource: 'hp', factor: +5, type: 'random' }
         ],
     },
 ];
@@ -116,8 +117,8 @@ const settings = {
 
 const style = `
 .newSpell .img {
-    background-repeat: no-repeat,
-    background-position: center,
+    background-repeat: no-repeat;
+    background-position: center;
     background-size: 30px 30px
 }
 
@@ -126,10 +127,23 @@ const style = `
 }
 
 .newSpell .mana {
-    display: flex,
-    flex-flow: column,
-    align-items: center,
-    justify-content: center
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(147, 70, 217, 0.24) !important;
+}
+
+.newSpell .bonus {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background-color: rgba(100, 217, 70, 0.24);
+    padding: 3px 0px;
+}
+
+.newSpell .details {
+    padding-top: 0px !important;
 }
 `
 
@@ -210,15 +224,15 @@ function createSpell(spell) {
 
     const spellCard = this.cloneNode(true)
     spellCard.classList.add('newSpell')
-
+    const spellRow = this.parentElement
+    spellRow.appendChild(spellCard)
+    
     setSpellTitle(spellCard, name)
     // To do: setSpellDescription
     setSpellIcon(spellCard, imgSrc)
     setSpellCosts(spellCard, modifiers)
     setSpellBehavior(spellCard, spell)
     
-    const spellRow = this.parentElement
-    spellRow.appendChild(spellCard)
 }
 
 /***************
@@ -441,20 +455,31 @@ function setSpellBehavior (spell, { name, modifiers }) {
  */
 function cloneAndEditCost({ resource, factor, type }) {
     const { color, icon, symbol } = settings
-    if (factor >= 0) {
-        return
-    }
-
     const cost = this.querySelector('.mana-text')
     const newCost = cost.cloneNode(true)
     newCost.style.color = color[resource]
     
     const [ costIcon, costText ] = newCost.children
     costIcon.innerHTML = icon[resource]
-    costText.innerText = factor + symbol[type]
+    costText.innerText = Math.abs(factor) + symbol[type]
     costText.style.color = color[resource]
     
-    this.appendChild(newCost)
+    if (factor < 0) {
+        this.appendChild(newCost)
+    } else {
+        const details = this.parentElement
+        const detailsFirstElement = details.firstChild
+
+        let bonus = details.querySelector('.bonus')
+        if (!bonus) {
+            bonus = document.createElement('div')
+            bonus.classList.add('bonus')
+        }
+
+        bonus.appendChild(newCost)
+        newCost.style.padding = '0px 5px'
+        details.insertBefore(bonus, detailsFirstElement)
+    }
 }
 
 /***********
@@ -466,7 +491,7 @@ function cloneAndEditCost({ resource, factor, type }) {
  * @param { String } styleSheet 
  */
 function setDocumentStyle(styleSheet) {
-    const lines = styleSheet.replace(/\,/g, '').match(/(.+)+/g)
+    const lines = styleSheet.replace(/\;/g, '').match(/(.+)+/g)
     const rules = lines.reduce(parseStyleSheet, [])
     const style = document.createElement('style');
     document.head.appendChild(style);
