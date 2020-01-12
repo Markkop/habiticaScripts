@@ -13,20 +13,21 @@ With this project I've been able to practice **Javascript, HTML, CSS, Testing an
 
 ## How to Use Habitica Custom Skills
 
-1. Install [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) / [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)  
-2. Click on its icon and `New user script`  
-3. Copy the content of [src/habiticaCustomSkills.user.js](src/habiticaCustomSkills) and paste on it  
-4. Add your `user` and `api` [tokens](https://habitica.com/user/settings/api) to the **tokens** object  
+1. Install [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) / [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
+2. Click on its icon and `New user script`
+3. Copy the content of [src/habiticaCustomSkills.user.js](src/habiticaCustomSkills) and paste on it
+4. Add your `user` and `api` [tokens](https://habitica.com/user/settings/api) to the **tokens** object
 5. Reload your [Habitica](https://habitica.com/)'s home
 
 ## How to develop
 
 Check [this guide](https://violentmonkey.github.io/posts/how-to-edit-scripts-with-your-favorite-editor/) to "live delevop" this script.
 
-* To change `changeStats()` and `checkRequirements()` functions it is advised to alter them in the [test file](src/stats.test.js) while running it with `npm test`.  
-* If some wrong value is sent to Habitica's API, your stat will be zeroed and this can result in unexpected results, like death.  
-* Don't forget to copy your changed functions to **habiticaCustomSkills.user.js** file
+-   To change `changeStats()` and `checkRequirements()` functions it is advised to alter them in the [test file](src/stats.test.js) while running it with `npm test`.
+-   If some wrong value is sent to Habitica's API, your stat will be zeroed and this can result in unexpected results, like death.
+-   Don't forget to copy your changed functions to **habiticaCustomSkills.user.js** file
 
+Tip: Use [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) and [Formatting Toggle](https://marketplace.visualstudio.com/items?itemName=tombonnike.vscode-status-bar-format-toggle) for code formatting
 
 # Progress History
 
@@ -44,14 +45,13 @@ Check [this guide](https://violentmonkey.github.io/posts/how-to-edit-scripts-wit
 
 [(Printscreen of old testing file)](https://i.imgur.com/BLkLpcj.png)
 
-
 ## Some references
 
-- [JavaScript and Node Testing Best Practices](https://javascriptweekly.com/link/68555/14d64d4a39)
-- [Jest Fetch Mock](https://www.npmjs.com/package/jest-fetch-mock#installation-and-setup)
-- [How to mock specific module function in jest?](https://medium.com/@qjli/how-to-mock-specific-module-function-in-jest-715e39a391f4)
-- [Things I learned after writing tests for JS and HTML page](https://dev.to/snowleo208/things-i-learned-after-writing-tests-for-js-and-html-page-4lja)
-- [BFG Repo Cleaner](https://rtyley.github.io/bfg-repo-cleaner/)
-- [Reduce unit tests boilerplate with Jest’s .each syntax](https://itnext.io/reduce-unit-tests-boilerplate-with-jests-each-syntax-f5e48828437f)
-- [Jest ignore or exclude file/function/statement from test coverage](https://codewithhugo.com/jest-exclude-coverage/)
-- [How to read Test Coverage report generated using Jest](https://medium.com/@krishankantsinghal/how-to-read-test-coverage-report-generated-using-jest-c2d1cb70da8b)
+-   [JavaScript and Node Testing Best Practices](https://javascriptweekly.com/link/68555/14d64d4a39)
+-   [Jest Fetch Mock](https://www.npmjs.com/package/jest-fetch-mock#installation-and-setup)
+-   [How to mock specific module function in jest?](https://medium.com/@qjli/how-to-mock-specific-module-function-in-jest-715e39a391f4)
+-   [Things I learned after writing tests for JS and HTML page](https://dev.to/snowleo208/things-i-learned-after-writing-tests-for-js-and-html-page-4lja)
+-   [BFG Repo Cleaner](https://rtyley.github.io/bfg-repo-cleaner/)
+-   [Reduce unit tests boilerplate with Jest’s .each syntax](https://itnext.io/reduce-unit-tests-boilerplate-with-jests-each-syntax-f5e48828437f)
+-   [Jest ignore or exclude file/function/statement from test coverage](https://codewithhugo.com/jest-exclude-coverage/)
+-   [How to read Test Coverage report generated using Jest](https://medium.com/@krishankantsinghal/how-to-read-test-coverage-report-generated-using-jest-c2d1cb70da8b)
