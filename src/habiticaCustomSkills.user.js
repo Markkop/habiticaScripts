@@ -186,20 +186,19 @@ const style = `
 /**
  * Execute this script
  */
-function main() {
+async function main() {
     try {
         logs('Starting habiticaCustomSkills script', {customSkills})
-        setDocumentStyle(style)
-        const spellCard = document.querySelector('.spell-container .row div')
+        const spellCard = await waitForExistance(getSpellCard)
         customSkills.forEach(createSpell, spellCard)
+        setDocumentStyle(style)
     } catch (error) {
         logs('Error on habiticaCustomSkills.user.js', {error})
     }
 }
+main()
 
-// Execute this script after 3 sec
-// To do: find a better way to check if the page has completely loaded
-setTimeout(main, 3000)
+
 
 /**
  * For each custom spell, creates a new spell card
@@ -348,11 +347,10 @@ const changeStats = (modifiers, currentStats) => {
 const checkRequirements = (newStats, currentStats) => {
     const newStatsPairs = Object.entries(newStats);
     return newStatsPairs.reduce((result, [key, value]) => {
-        const stat = key.split('.')[1]
-        const requiredValue = currentStats[stat] + value * -1
+        const requiredValue = currentStats[key] + value * -1
 
         if (value < 0) {
-            logs(`You need ${requiredValue} ${stat} to cast this skill`, {newStats}, {currentStats})
+            logs(`You need ${requiredValue} ${key} to cast this skill`, {newStats}, {currentStats})
             return false
         }
 
@@ -429,6 +427,7 @@ function setSpellBehavior (spell, { name, modifiers }) {
             return logs(`Failed to cast ${name}: request error`, {tokens}, {response})
         }
 
+        logs(`${name} has been cast!`, {newStats})
         return
     }
 }
@@ -510,8 +509,49 @@ function parseStyleSheet(rules, line) {
 /***********
  ** UTILS **
  ***********/
+
+ /**
+  * Logs a message and objects passed as arguments
+  */
 function logs() {
     const [ message, ...details ] = [...arguments]
     const warning = details.reduce((parsedObject, object) => ({...parsedObject, ...object}), {})
     console.warn({message, ...warning})  
+}
+
+/**
+ * Wait for the existance of a value
+ * @param { function } getValueFunction function that returns the value
+ * @param { number } time wait time before trying again
+ * @param { number } maxTries max tries before stop waiting
+ * @returns { Promise }
+ */
+function waitForExistance(getValueFunction, time = 200, maxTries = 10) {
+    return new Promise((resolve, reject) => {
+        let tries = 0
+        let interval = setInterval(() => {  
+            const value = getValueFunction()
+            if (!value) {
+                tries += 1
+                return 
+            }
+
+            if (tries >= maxTries) {
+                logs(`No value was found after ${tries} tries`, {getValueFunction})
+                clearInterval(interval)
+                return reject(null)
+            }
+
+            clearInterval(interval)
+            return resolve(value)
+        }, time)
+    })
+}
+
+/**
+ * Get spell card html element
+ * @returns { HTMLDivElement } spell card
+ */
+function getSpellCard() {
+    return document.querySelector('.spell-container .row div')
 }
