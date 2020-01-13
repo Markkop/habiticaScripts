@@ -1,15 +1,14 @@
 {
-  "name": "habiticacustomskills",
-  "version": "2.0.2",
-  "description": "Create new skills on Habitica by changing custom values",
-  "scripts": {
-    "test": "jest --watch"
-  },
-  "author": "Marcelo 'Mark' Kopmann",
-  "license": "ISC",
-  "devDependencies": {
-    "jest": "^24.8.0"
-  },
-  "dependencies": {
-  }
+    "name": "habiticacustomskills",
+    "version": "2.1.0",
+    "description": "Create new skills on Habitica by changing custom values",
+    "scripts": {
+        "test": "jest --watch"
+    },
+    "author": "Marcelo 'Mark' Kopmann",
+    "license": "ISC",
+    "devDependencies": {
+        "jest": "^24.8.0"
+    },
+    "dependencies": {}
 }
