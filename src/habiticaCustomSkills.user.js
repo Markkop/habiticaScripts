@@ -69,8 +69,8 @@ const customSkills = [
  **************/
 
 const settings = {
+    debugMode: false,
     tokens: {
-        // Replace with yours: https://habitica.com/user/settings/api
         user: '',
         api: '',
     },
@@ -201,6 +201,7 @@ const style = `
 async function main() {
     try {
         logs('Starting habiticaCustomSkills script', { customSkills })
+        settings.tokens = await checkAndSetTokens()
         const spellCard = await waitForExistance(getSpellCard)
         customSkills.forEach(createSpell, spellCard)
         setDocumentStyle(style)
@@ -284,7 +285,7 @@ const putStats = async newStats => {
 
         const respJson = await response.json()
 
-        document.querySelector('[role=link]').click()
+        clickOnSelector('[role=link]')
         return respJson
     } catch (error) {
         logs('Error while updating user stats', { error })
@@ -570,4 +571,58 @@ function waitForExistance(getValueFunction, time = 200, maxTries = 10) {
  */
 function getSpellCard() {
     return document.querySelector('.spell-container .row div')
+}
+
+/**
+ * Set user and api tokens by getting them from settings page
+ */
+async function checkAndSetTokens() {
+    if (settings.debugMode) return settings.tokens
+
+    let [user, api] = getCookies('hbt-user', 'hbt-api')
+    if (user && api) {
+        return {
+            user: atob(user),
+            api: atob(api),
+        }
+    }
+
+    await clickOnSelector("[href='/user/settings/site']")
+    await clickOnSelector("[href='/user/settings/api']")
+    await clickOnSelector('.section .btn')
+
+    const [userElement, apiElement] = document.querySelectorAll('.prettyprint')
+    user = userElement && userElement.innerText
+    api = apiElement && apiElement.innerText
+
+    document.cookie = `hbt-user=${btoa(user)}`
+    document.cookie = `hbt-api=${btoa(api)}`
+    await clickOnSelector("[href='/']")
+
+    return {
+        user,
+        api,
+    }
+}
+
+/**
+ * Click on an element found by document.querySelector(string)
+ * @param { string } selector
+ */
+async function clickOnSelector(selector) {
+    const element = await waitForExistance(() => document.querySelector(selector), 100)
+    element && element.click()
+}
+
+/**
+ * Get cookies values
+ * @param  {...string} keys cookie keys
+ * @returns { string[] } cookie values
+ */
+function getCookies(...keys) {
+    const cookies = document.cookie.split(';')
+    return keys.map(key => {
+        const cookieMatched = cookies.find(cookie => cookie.includes(key))
+        return cookieMatched && cookieMatched.split('=')[1]
+    })
 }
