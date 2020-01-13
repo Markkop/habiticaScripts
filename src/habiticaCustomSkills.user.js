@@ -8,11 +8,8 @@
 // ==/UserScript==
 
 // To Do list:
-// - Set linter and formating rules
-// - setSpellDescription()
-// - A webpack to split code into files
-// - Configure CircleCI
 // - Visual interface to change custom skills
+// - A webpack to split code into files
 // - More tests
 
 /************
@@ -55,7 +52,7 @@ const customSkills = [
     {
         name: 'Throw a Coin',
         imgSrc: 'https://cdn.iconscout.com/icon/premium/png-256-thumb/water-fountain-1840249-1560151.png',
-        description: 'Try your luck by throwing a coin the fountain.',
+        description: 'Try your luck by throwing a coin in the fountain.',
         modifiers: [
             { resource: 'gp', factor: -5, type: 'flat' },
             { resource: 'mp', factor: +10, type: 'random' },
@@ -143,6 +140,43 @@ const style = `
 .newSpell .details {
     padding-top: 0px;
 }
+
+.mytooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.mytooltip .mytooltiptext {
+  margin-left: -36px;
+  visibility: hidden;
+  width: 300px;
+  height: fit-content;
+  text-align: center;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  top: auto;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.mytooltip .mytooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.mytooltip:hover .mytooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
 `
 
 /**********************
@@ -215,6 +249,7 @@ main()
  * For each custom spell, creates a new spell card
  * and append them to the spell's row container
  * @param { CustomSpell } customSpell
+ * @context { HTMLDivElement } spellCard
  */
 function createSpell(spell) {
     const { name, imgSrc, description, modifiers } = spell
@@ -225,7 +260,7 @@ function createSpell(spell) {
     spellRow.appendChild(spellCard)
 
     setSpellTitle(spellCard, name)
-    // To do: setSpellDescription
+    setSpellDescription(spellCard, description)
     setSpellIcon(spellCard, imgSrc)
     setSpellCosts(spellCard, modifiers)
     setSpellBehavior(spellCard, spell)
@@ -380,6 +415,19 @@ const checkRequirements = (newStats, currentStats) => {
 function setSpellTitle(spell, name) {
     const title = spell.querySelector('.title')
     title.innerText = name
+}
+
+/**
+ * Create a hovering spell's description
+ * @param { HTMLDivElement } spell
+ * @param { string } name
+ */
+function setSpellDescription(spell, description) {
+    spell.classList.add('mytooltip')
+    const descElement = document.createElement('span')
+    descElement.innerText = description
+    descElement.classList.add('mytooltiptext', 'popover-body', 'popover')
+    spell.appendChild(descElement)
 }
 
 /**
