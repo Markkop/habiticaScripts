@@ -1,3 +1,9 @@
 language: node_js
 node_js:
   - 7
+env:
+  - CODECOV_TOKEN="e377f5a1-42d3-493f-94ae-79781f3e1cef"
+install:
+  - npm install -g codecov
+scripts:
+  - jest && codecov

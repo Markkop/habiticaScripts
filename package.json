@@ -19,5 +19,9 @@
         "rollup-plugin-banner": "git+https://github.com/Markkop/rollup-plugin-banner.git",
         "rollup-plugin-shift-header": "^1.0.1"
     },
-    "dependencies": {}
+    "dependencies": {},
+    "jest": {
+        "coverageDirectory": "./coverage/",
+        "collectCoverage": true
+      }
 }
