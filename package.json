@@ -3,7 +3,8 @@
     "version": "3.0.0",
     "description": "Create new skills on Habitica by changing custom values",
     "scripts": {
-        "test": "jest --watch",
+        "test": "jest",
+        "watch": "jest --watch",
         "build": "rollup -c"
     },
     "author": "Marcelo 'Mark' Kopmann",

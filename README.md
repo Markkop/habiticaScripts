@@ -22,7 +22,7 @@ With this project I've been able to practice **Javascript, HTML, CSS, Testing an
 Check [this guide](https://violentmonkey.github.io/posts/how-to-edit-scripts-with-your-favorite-editor/) to "live delevop" this script.
 
 1. Run `npm install` to install dependencies
-1. Run `npm run test` to test files
+1. Run `npm run test` to test files or `npm run watch` to monitor them
 3. Run `npm run build` to create the script file in `dist` directory
 
 Tip: Use [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) and [Formatting Toggle](https://marketplace.visualstudio.com/items?itemName=tombonnike.vscode-status-bar-format-toggle) for code formatting
