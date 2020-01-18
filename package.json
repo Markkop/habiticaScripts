@@ -5,7 +5,8 @@
     "scripts": {
         "test": "jest",
         "watch": "jest --watch",
-        "build": "rollup -c"
+        "build": "rollup -c",
+        "test:ci": "jest && codecov"
     },
     "author": "Marcelo 'Mark' Kopmann",
     "license": "ISC",
@@ -17,11 +18,12 @@
         "babel-jest": "^24.9.0",
         "rollup": "^1.29.0",
         "rollup-plugin-banner": "git+https://github.com/Markkop/rollup-plugin-banner.git",
-        "rollup-plugin-shift-header": "^1.0.1"
+        "rollup-plugin-shift-header": "^1.0.1",
+        "codecov": "^3.6.1"
     },
     "dependencies": {},
     "jest": {
         "coverageDirectory": "./coverage/",
         "collectCoverage": true
-      }
+    }
 }
