@@ -17,10 +17,9 @@ With this project I've been able to practice **Javascript, HTML, CSS, Testing an
 
 ## How to Use Habitica Custom Skills
 
-1. Install [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) / [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
-2. Click on its icon and `New user script`
-3. Copy the content of [dist/habiticaCustomSkills.user.js](dist/habiticaCustomSkills.user.js) and paste on it
-4. Reload your [Habitica](https://habitica.com/)'s home
+1. Install [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/)
+2. [Click here](https://github.com/Markkop/habiticaCustomSkills/raw/master/dist/habiticaCustomSkills.user.js) and install the `dist/habiticaCustomSkills.user.js` file
+3. Access [Habitica](https://habitica.com/)'s home
 
 ## How to develop
 
@@ -58,3 +57,4 @@ Tip: Use [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.p
 -   [Reduce unit tests boilerplate with Jest’s .each syntax](https://itnext.io/reduce-unit-tests-boilerplate-with-jests-each-syntax-f5e48828437f)
 -   [Jest ignore or exclude file/function/statement from test coverage](https://codewithhugo.com/jest-exclude-coverage/)
 -   [How to read Test Coverage report generated using Jest](https://medium.com/@krishankantsinghal/how-to-read-test-coverage-report-generated-using-jest-c2d1cb70da8b)
+-   [How to use GitHub badges to stop feeling like a noob](https://www.freecodecamp.org/news/how-to-use-badges-to-stop-feeling-like-a-noob-d4e6600d37d2/)
