@@ -1,3 +1,12 @@
+export const header = `==UserScript==
+@name        habiticaCustomSkills
+@version     2.1.0
+@description Create new skills on Habitica by changing custom values
+@include     http*://habitica.com*
+@run-at 	    document-idle
+@author      Marcelo 'Mark' Kopmann
+==/UserScript==`
+
 export const settings = {
     debugMode: false,
     tokens: {
@@ -42,52 +51,6 @@ export const settings = {
         maxMP: 100,
     },
 }
-
-/**********************
- ** TYPE DEFINITIONS **
- **********************/
-
-/**
- * @typedef HabiticaStats
- * @property { Number } hp 
- * @property { Number } mp 
- * @property { Number } exp 
- * @property { Number } gp 
- * @property { Number } toNextLevel 
- * @property { Number } maxHealth 
- * @property { Number } maxMP 
-/**
-
-/**
- * @typedef CustomSpell
- * @property { string } name
- * @property { string } imgSrc
- * @property { string } description
- * @property { SpellModifier[] } modifiers
- */
-
-/**
- * @typedef SpellModifier
- * @property { string } resource
- * @property { number } factor
- * @property { 'flat'|'max'|'current'|'random' } [type=flat]
- */
-
-/**
- * @typedef ValidStats
- * @property { number } [stats.hp]
- * @property { number } [stats.mp]
- * @property { number } [stats.exp]
- * @property { number } [stats.gp]
- */
-
-/**
- * @typedef ChangedStats
- * @property { number } [hp]
- * @property { number } [mp]
- * @property { number } [exp]
- * @property { number } [gp]
- */
 
 export const style = `
 .newSpell .img {

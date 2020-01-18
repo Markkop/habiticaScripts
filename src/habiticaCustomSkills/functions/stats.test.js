@@ -1,5 +1,4 @@
 import { changeStats, checkRequirements } from './stats'
-jest.mock('./utils')
 
 const mockedStats = {
     hp: 37.03646565806994,

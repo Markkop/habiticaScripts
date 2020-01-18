@@ -1,6 +1,27 @@
-import { logs, clickOnSelector } from './utils'
+import { logs, clickOnSelector } from '../../utils/common'
 import { settings } from '../settings'
 import { validateStats } from './stats'
+
+/**
+ * @typedef HabiticaStats
+ * @property { Number } hp 
+ * @property { Number } mp 
+ * @property { Number } exp 
+ * @property { Number } gp 
+ * @property { Number } toNextLevel 
+ * @property { Number } maxHealth 
+ * @property { Number } maxMP 
+/**
+
+
+/**
+ * @typedef ChangedStats
+ * @property { number } [hp]
+ * @property { number } [mp]
+ * @property { number } [exp]
+ * @property { number } [gp]
+ */
+
 
 /**
  * Get user's stats (hp, mp, ...) from Habitica's endpoint

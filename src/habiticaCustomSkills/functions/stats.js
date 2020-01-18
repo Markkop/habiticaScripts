@@ -1,5 +1,15 @@
 import { settings } from '../settings'
-import { logs } from './utils'
+import { logs } from '../../utils/common'
+
+
+/**
+ * @typedef ValidStats
+ * @property { number } [stats.hp]
+ * @property { number } [stats.mp]
+ * @property { number } [stats.exp]
+ * @property { number } [stats.gp]
+ */
+
 
 /**
  * Validate and return stats

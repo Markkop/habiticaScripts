@@ -1,7 +1,31 @@
 import { changeStats, checkRequirements } from './stats'
 import { getStats, putStats } from './api'
 import { settings } from '../settings'
-import { logs } from './utils'
+import { logs } from '../../utils/common'
+
+/**
+ * @typedef CustomSpell
+ * @property { string } name
+ * @property { string } imgSrc
+ * @property { string } description
+ * @property { SpellModifier[] } modifiers
+ */
+
+/**
+ * @typedef SpellModifier
+ * @property { string } resource
+ * @property { number } factor
+ * @property { 'flat'|'max'|'current'|'random' } [type=flat]
+ */
+
+
+/**
+ * Get spell card html element
+ * @returns { HTMLDivElement } spell card
+ */
+export function getSpellCard() {
+    return document.querySelector('.spell-container .row div')
+}
 
 /**
  * For each custom spell, creates a new spell card

@@ -1,8 +1,8 @@
-import { logs, waitForExistance, checkAndSetTokens, getSpellCard } from './functions/utils.js'
-import { setDocumentStyle } from './functions/style'
+import { logs, waitForExistance, checkAndSetTokens} from '../utils/common'
+import { setDocumentStyle } from '../utils/style'
 import { style, settings } from './settings'
 import { customSkills } from './skills'
-import { createSpell } from './functions/element'
+import { createSpell, getSpellCard } from './functions/element'
 
 /**
  * Execute this script
@@ -10,7 +10,7 @@ import { createSpell } from './functions/element'
 async function main() {
     try {
         logs('Starting habiticaCustomSkills script', { customSkills })
-        settings.tokens = await checkAndSetTokens()
+        settings.tokens = await checkAndSetTokens(settings)
         const spellCard = await waitForExistance(getSpellCard)
         customSkills.forEach(createSpell, spellCard)
         setDocumentStyle(style)

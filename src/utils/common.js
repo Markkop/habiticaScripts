@@ -1,5 +1,3 @@
-import { settings } from '../settings'
-
 /**
  * Logs a message and objects passed as arguments
  */
@@ -39,17 +37,9 @@ export function waitForExistance(getValueFunction, time = 200, maxTries = 10) {
 }
 
 /**
- * Get spell card html element
- * @returns { HTMLDivElement } spell card
- */
-export function getSpellCard() {
-    return document.querySelector('.spell-container .row div')
-}
-
-/**
  * Set user and api tokens by getting them from settings page
  */
-export async function checkAndSetTokens() {
+export async function checkAndSetTokens(settings) {
     if (settings.debugMode) return settings.tokens
 
     let [user, api] = getCookies('hbt-user', 'hbt-api')
