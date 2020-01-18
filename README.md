@@ -1,6 +1,7 @@
 # habiticaCustomSkills
 
-[![Build Status](https://travis-ci.com/Markkop/habiticaCustomSkills.svg?branch=master)](https://travis-ci.com/Markkop/habiticaCustomSkills)
+[![Build Status](https://travis-ci.com/Markkop/habiticaCustomSkills.svg?branch=rollup)](https://travis-ci.com/Markkop/habiticaCustomSkills)
+[![codecov](https://codecov.io/gh/Markkop/habiticaCustomSkills/branch/rollup/graph/badge.svg)](https://codecov.io/gh/Markkop/habiticaCustomSkills)
 
 ## Status
 
