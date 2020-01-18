@@ -8,12 +8,10 @@
 
 :rocket: **habiticaCustomSkills project has been renamed to habiticaScripts**
 
-
 ## Motivation
 
 While using Habitica to organize myself I ended up **outleveling my friends** and wondered how I could adjust my leveling process to keep up with the party.  
 That's how this project begins. By creating new skills and **consuming experience points** , I've slow down my leveling in exchange for other resources such hp, Then I got pretty hyped to expand these customizations even further with other people contributions and transformed a single script file in this cool **custom suite**. We even have badges!
-
 
 ## How to Use Habitica Custom Skills
 
