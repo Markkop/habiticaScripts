@@ -1,30 +1,32 @@
-# habiticaCustomSkills
+# :file_folder: habiticaScripts
 
-## Status
+![Repo status](https://www.repostatus.org/badges/latest/active.svg)
+[![Build Status](https://travis-ci.com/Markkop/habiticaScripts.svg?branch=master)](https://travis-ci.com/Markkop/habiticaScripts)
+[![codecov](https://codecov.io/gh/Markkop/habiticaScripts/branch/master/graph/badge.svg)](https://codecov.io/gh/Markkop/habiticaScripts)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/Markkop/habiticaScripts/issues)
+[![Awesome Badges](https://img.shields.io/badge/badges-awesome-green.svg)](https://github.com/Naereen/badges)
 
-**Version 2 has been launched!**  
-This script was my first javascript project and I've learned A LOT since then. It's been broken for a while and I decided to refactor it with my new learnings and with a different strategy: instead of creating all html elements by hand, I'm now cloning them from existing ones and changing the values I need.
+:rocket: **Version 3.0**: habiticaCustomSkills project has been renamed to **habiticaScripts**
 
 ## Motivation
 
-I've already used **Habitica** once and just started using it again to organize myself. However, I've been so focused that I quickly **outleveled my friends** and wondered how could I adjust my leveling process so I could keep up with the party.  
-That's how this project begins. By **consuming experience points** while using skills, I could slow down my leveling in exchange for other resources such hp, mana and gold. The challenging part here is to balance them correctly so these custom skills don't become too overpowered.  
-With this project I've been able to practice **Javascript, HTML, CSS, Testing and Functional Programming skills**.
+While using Habitica to organize myself I ended up **outleveling my friends** and wondered how I could adjust my leveling process to keep up with the party.  
+That's how this project begins. By creating new skills and **consuming experience points** , I've slow down my leveling in exchange for other resources such hp, Then I got pretty hyped to expand these customizations even further with other people contributions and transformed a single script file in this cool **custom suite**. We even have badges!
+
 
 ## How to Use Habitica Custom Skills
 
-1. Install [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) / [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
-2. Click on its icon and `New user script`
-3. Copy the content of [src/habiticaCustomSkills.user.js](src/habiticaCustomSkills) and paste on it
-4. Reload your [Habitica](https://habitica.com/)'s home
+1. Install [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/)
+2. [Click here](https://github.com/Markkop/habiticaCustomSkills/raw/master/dist/habiticaCustomSkills.user.js) and install the `dist/habiticaCustomSkills.user.js` userscript file
+3. Access [Habitica](https://habitica.com/)'s home
 
 ## How to develop
 
 Check [this guide](https://violentmonkey.github.io/posts/how-to-edit-scripts-with-your-favorite-editor/) to "live delevop" this script.
 
--   To change `changeStats()` and `checkRequirements()` functions it is advised to alter them in the [test file](src/stats.test.js) while running it with `npm test`.
--   If some wrong value is sent to Habitica's API, your stat will be zeroed and this can result in unexpected results, like death.
--   Don't forget to copy your changed functions to **habiticaCustomSkills.user.js** file
+1. Run `npm install` to install dependencies
+1. Run `npm run test` to test files or `npm run watch` to monitor them
+3. Run `npm run build` to create the script file in `dist` directory
 
 Tip: Use [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) and [Formatting Toggle](https://marketplace.visualstudio.com/items?itemName=tombonnike.vscode-status-bar-format-toggle) for code formatting
 
@@ -54,3 +56,4 @@ Tip: Use [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.p
 -   [Reduce unit tests boilerplate with Jest’s .each syntax](https://itnext.io/reduce-unit-tests-boilerplate-with-jests-each-syntax-f5e48828437f)
 -   [Jest ignore or exclude file/function/statement from test coverage](https://codewithhugo.com/jest-exclude-coverage/)
 -   [How to read Test Coverage report generated using Jest](https://medium.com/@krishankantsinghal/how-to-read-test-coverage-report-generated-using-jest-c2d1cb70da8b)
+-   [How to use GitHub badges to stop feeling like a noob](https://www.freecodecamp.org/news/how-to-use-badges-to-stop-feeling-like-a-noob-d4e6600d37d2/)

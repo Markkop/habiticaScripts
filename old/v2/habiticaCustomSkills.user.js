@@ -9,7 +9,6 @@
 
 // To Do list:
 // - Visual interface to change custom skills
-// - A webpack to split code into files
 // - More tests
 
 /************
