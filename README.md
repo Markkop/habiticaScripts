@@ -1,9 +1,10 @@
-# habiticaCustomSkills
+# :scroll: habiticaCustomSkills
 
 ![Repo status](https://www.repostatus.org/badges/latest/active.svg)
 [![Build Status](https://travis-ci.com/Markkop/habiticaCustomSkills.svg?branch=rollup)](https://travis-ci.com/Markkop/habiticaCustomSkills)
 [![codecov](https://codecov.io/gh/Markkop/habiticaCustomSkills/branch/rollup/graph/badge.svg)](https://codecov.io/gh/Markkop/habiticaCustomSkills)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/Markkop/habiticaCustomSkills/issues)
+[![Awesome Badges](https://img.shields.io/badge/badges-awesome-green.svg)](https://github.com/Naereen/badges)
 
 ## Status
 
