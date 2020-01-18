@@ -15,7 +15,7 @@ That's how this project begins. By creating new skills and **consuming experienc
 
 ## How to Use Habitica Custom Skills
  
-1. Install [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/)
+1. Install the userscript manager **Violentmonkey** for [FireFox](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) or [Chrome](https://chrome.google.com/webstore/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag?hl=en)
 2. [Click here](https://github.com/Markkop/habiticaCustomSkills/raw/master/dist/habiticaCustomSkills.user.js) and install the `dist/habiticaCustomSkills.user.js` userscript file
 3. Access [Habitica](https://habitica.com/)'s home
 
