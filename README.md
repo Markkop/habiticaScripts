@@ -2,7 +2,6 @@
 
 ## Status
 
-**Version 2 has been launched!**  
 This script was my first javascript project and I've learned A LOT since then. It's been broken for a while and I decided to refactor it with my new learnings and with a different strategy: instead of creating all html elements by hand, I'm now cloning them from existing ones and changing the values I need.
 
 ## Motivation
@@ -15,16 +14,16 @@ With this project I've been able to practice **Javascript, HTML, CSS, Testing an
 
 1. Install [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) or [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) / [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
 2. Click on its icon and `New user script`
-3. Copy the content of [src/habiticaCustomSkills.user.js](src/habiticaCustomSkills) and paste on it
+3. Copy the content of [dist/habiticaCustomSkills.user.js](dist/habiticaCustomSkills.user.js) and paste on it
 4. Reload your [Habitica](https://habitica.com/)'s home
 
 ## How to develop
 
 Check [this guide](https://violentmonkey.github.io/posts/how-to-edit-scripts-with-your-favorite-editor/) to "live delevop" this script.
 
--   To change `changeStats()` and `checkRequirements()` functions it is advised to alter them in the [test file](src/stats.test.js) while running it with `npm test`.
--   If some wrong value is sent to Habitica's API, your stat will be zeroed and this can result in unexpected results, like death.
--   Don't forget to copy your changed functions to **habiticaCustomSkills.user.js** file
+1. Run `npm install` to install dependencies
+1. Run `npm run test` to test files
+3. Run `npm run build` to create the script file in `dist` directory
 
 Tip: Use [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) and [Formatting Toggle](https://marketplace.visualstudio.com/items?itemName=tombonnike.vscode-status-bar-format-toggle) for code formatting
 

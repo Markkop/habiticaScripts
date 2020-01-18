@@ -1,14 +1,22 @@
 {
     "name": "habiticacustomskills",
-    "version": "2.1.0",
+    "version": "3.0.0",
     "description": "Create new skills on Habitica by changing custom values",
     "scripts": {
-        "test": "jest --watch"
+        "test": "jest --watch",
+        "build": "rollup -c"
     },
     "author": "Marcelo 'Mark' Kopmann",
     "license": "ISC",
     "devDependencies": {
-        "jest": "^24.8.0"
+        "@babel/core": "^7.8.3",
+        "@babel/node": "^7.8.3",
+        "@babel/preset-env": "^7.8.3",
+        "jest": "^24.9.0",
+        "babel-jest": "^24.9.0",
+        "rollup": "^1.29.0",
+        "rollup-plugin-banner": "git+https://github.com/Markkop/rollup-plugin-banner.git",
+        "rollup-plugin-shift-header": "^1.0.1"
     },
     "dependencies": {}
 }

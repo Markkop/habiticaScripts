@@ -1,4 +1,5 @@
-// Use this test to develop using mocked data instead of live data
+import { changeStats, checkRequirements } from './stats'
+jest.mock('./utils')
 
 const mockedStats = {
     hp: 37.03646565806994,
@@ -8,39 +9,6 @@ const mockedStats = {
     toNextLevel: 1640,
     maxHealth: 50,
     maxMP: 390,
-}
-
-// Remember to copy/paste this function if changed on user.js file
-const settings = {
-    max: {
-        hp: 'maxHealth',
-        mp: 'maxMP',
-        exp: 'toNextLevel',
-        gp: 'gp',
-    },
-}
-
-const changeStats = (modifiers, currentStats) => {
-    return modifiers.reduce((newStats, modifier) => {
-        const { resource, factor, type } = modifier
-        const current = currentStats[resource]
-        const integer = Number(String(current).split('.')[0])
-        const decimal = String(current).split('.')[1] || ''
-        const max = currentStats[settings.max[resource]]
-
-        const newValue = {
-            flat: integer + factor,
-            max: integer + (max / 100) * factor,
-            current: integer + (current / 100) * factor,
-            random: integer + Math.floor(Math.random() * (factor - 1)) + 1,
-        }
-        const newStat = Math.round(newValue[type || 'flat'])
-
-        return {
-            ...newStats,
-            [resource]: Number(newStat + '.' + decimal),
-        }
-    }, {})
 }
 
 describe('Stat', () => {
@@ -169,20 +137,6 @@ describe('Stat', () => {
 
 describe('Checkrequirements', () => {
     const logs = () => {}
-
-    const checkRequirements = (newStats, currentStats) => {
-        const newStatsPairs = Object.entries(newStats)
-        return newStatsPairs.reduce((result, [key, value]) => {
-            const requiredValue = currentStats[key] + value * -1
-
-            if (value < 0) {
-                logs(`You need ${requiredValue} ${key} to cast this skill`, { newStats }, { currentStats })
-                return false
-            }
-
-            return result
-        }, true)
-    }
 
     test("returns false if can't cast a spell", () => {
         const newStats = {
