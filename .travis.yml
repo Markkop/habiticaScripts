@@ -6,4 +6,4 @@ env:
 install:
   - npm install -g codecov
 scripts:
-  - jest && codecov
+  - npm run jest && codecov
