@@ -14,7 +14,7 @@ While using Habitica to organize myself I ended up **outleveling my friends** an
 That's how this project begins. By creating new skills and **consuming experience points** , I've slow down my leveling in exchange for other resources such hp, Then I got pretty hyped to expand these customizations even further with other people contributions and transformed a single script file in this cool **custom suite**. We even have badges!
 
 ## How to Use Habitica Custom Skills
-
+ 
 1. Install [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/)
 2. [Click here](https://github.com/Markkop/habiticaCustomSkills/raw/master/dist/habiticaCustomSkills.user.js) and install the `dist/habiticaCustomSkills.user.js` userscript file
 3. Access [Habitica](https://habitica.com/)'s home
