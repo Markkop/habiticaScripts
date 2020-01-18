@@ -1,5 +1,7 @@
 # habiticaCustomSkills
 
+[![Build Status](https://travis-ci.com/Markkop/habiticaCustomSkills.svg?branch=master)](https://travis-ci.com/Markkop/habiticaCustomSkills)
+
 ## Status
 
 This script was my first javascript project and I've learned A LOT since then. It's been broken for a while and I decided to refactor it with my new learnings and with a different strategy: instead of creating all html elements by hand, I'm now cloning them from existing ones and changing the values I need.
