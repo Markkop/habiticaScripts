@@ -6,7 +6,8 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/Markkop/habiticaScripts/issues)
 [![Awesome Badges](https://img.shields.io/badge/badges-awesome-green.svg)](https://github.com/Naereen/badges)
 
-:rocket: **Version 3.0**: habiticaCustomSkills project has been renamed to **habiticaScripts**
+:rocket: **habiticaCustomSkills project has been renamed to habiticaScripts**
+
 
 ## Motivation
 
