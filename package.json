@@ -5,7 +5,8 @@
     "scripts": {
         "test": "jest",
         "watch": "jest --watch",
-        "build": "node ./build.js"
+        "build": "node ./build.js",
+        "dev": "rollup --config src/habiticaCustomSkills/rollup.config.js --watch"
     },
     "author": "Marcelo 'Mark' Kopmann",
     "license": "ISC",
