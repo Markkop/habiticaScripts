@@ -5,7 +5,7 @@
     "scripts": {
         "test": "jest",
         "watch": "jest --watch",
-        "dev": "node ./actions.js"
+        "dev": "node ./src/actions.js"
     },
     "author": "Marcelo 'Mark' Kopmann",
     "license": "ISC",
