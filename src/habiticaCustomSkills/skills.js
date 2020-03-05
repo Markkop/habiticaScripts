@@ -1,7 +1,7 @@
 export const customSkills = [
     {
         name: 'Soul Pact',
-        imgSrc: 'https://www.pngix.com/pngfile/middle/48-486388_spell-book-icon-spellbook-icon-hd-png-download.png',
+        imgSrc: 'https://cdn2.iconfinder.com/data/icons/rpg-fantasy-game-skill-ui/512/necromancer_magic_dark_wizard_magician_skull_dead_sorcerer_hand-512.png',
         description: 'Sacrifices health and experience to recover 10% of your max mana',
         modifiers: [
             { resource: 'hp', factor: -20, type: 'max' },
@@ -22,7 +22,7 @@ export const customSkills = [
     {
         name: 'Time Rewind',
         imgSrc:
-            'https://www.pngix.com/pngfile/middle/185-1857051_stopwatch-comments-delay-clipart-transparent-hd-png-download.png',
+            'https://cdn.iconscout.com/icon/free/png-256/rewind-time-1-1171938.png',
         description:
             'Sends you back in time some moments ago consuming all your current experience and restoring 10% of your max health',
         modifiers: [
