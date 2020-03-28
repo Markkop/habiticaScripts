@@ -15,18 +15,17 @@ export function getPomodoroTask() {
 
 /**
  * Clicks and counts the given Pomodoro Task as a good habit
- * @returns { Boolean } true if clicked successfully
+ * @returns { Boolean } true if extract to window is successfull
  */
-export function clickOnGoodHabit(pomodoroTask) {
-    const plusSign = pomodoroTask.querySelector('.task-good-control-inner-habit')
+export function extractClick(pomodoroTask) {
+    const plusSign = pomodoroTask.querySelector('.left-control .task-control')
 
-    if (!plusSign) return false
+    if (!plusSign) return null
 
     const click = plusSign.click
     const isClickFunction = typeof click === 'function'
 
-    if (!isClickFunction) return false
+    if (!isClickFunction) return null
 
-    plusSign.click()
-    return true
+    return () => plusSign.click()
 }

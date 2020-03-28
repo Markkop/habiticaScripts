@@ -1,4 +1,4 @@
-import { getPomodoroTask, clickOnGoodHabit } from './element'
+import { getPomodoroTask, extractClick } from './element'
 import fs from 'fs'
 import path from 'path'
 const tasksHtmlMock = fs.readFileSync(path.resolve(__dirname, '../mocks/tasks.html'), 'utf8')
@@ -25,28 +25,28 @@ describe('getPomodoroTask', () => {
     })
 })
 
-describe('clickOnGoodHabit', () => {
+describe('extractClick', () => {
     afterEach(() => {
         document.body.innerHTML = ''
     })
-    it('returns false if no good habit button', () => {
-        const hasClicked = clickOnGoodHabit(document.body)
-        expect(hasClicked).toBeFalsy()
+    it("returns null if there's no task-control element", () => {
+        const click = extractClick(document.body)
+        expect(click).toBeFalsy()
     })
-    it("returns false if there's no click function", () => {
+    it('returns null if click is not a function', () => {
         document.body.innerHTML = pomodoroTaskMock
         const goodHabit = document.querySelector('.task-good-control-inner-habit')
         goodHabit.click = ''
 
-        const hasClicked = clickOnGoodHabit(document.body)
-        expect(hasClicked).toBeFalsy()
+        const click = extractClick(document.body)
+        expect(click).toBeFalsy()
     })
-    it('clicks on the good habit button', () => {
+    it('returns a function', () => {
         document.body.innerHTML = pomodoroTaskMock
         const goodHabit = document.querySelector('.task-good-control-inner-habit')
         goodHabit.click = () => {}
 
-        const hasClicked = clickOnGoodHabit(document)
-        expect(hasClicked).toBeTruthy()
+        const click = extractClick(document)
+        expect(typeof click).toBe('function')
     })
 })
