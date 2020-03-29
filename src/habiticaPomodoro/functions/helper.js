@@ -13,7 +13,7 @@ import { settings } from '../settings'
  */
 const parseNotes = text => {
     text = text.replace(/\:[0-9]*/g, '')
-    const [workTime, breakTime] = Array.from(text.match(/\d{1,2}/g)).map(Number)
+    const [workTime, breakTime] = Array.from(text.match(/\d{1,2}/g) || []).map(Number)
     if (workTime && breakTime) {
         return { workTime, breakTime }
     }
@@ -35,6 +35,8 @@ const getTimesFromTaskNotes = () => {
  */
 export const updateCustomTimes = () => {
     const customTimes = getTimesFromTaskNotes()
-    settings.workTime = customTimes.workTime
-    settings.breakTime = customTimes.breakTime
+    if (customTimes) {
+        settings.workTime = customTimes.workTime
+        settings.breakTime = customTimes.breakTime
+    }
 }
