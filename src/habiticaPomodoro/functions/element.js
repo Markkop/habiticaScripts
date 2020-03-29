@@ -1,7 +1,7 @@
 import { settings } from '../settings'
-import { onLeftControlClick, resetTimer } from './timer'
+import { onLeftControlClick, onRightControlClick } from './timer'
 
-const { playSvg, stopSvg, workTime } = settings
+const { playSvg, stopSvg } = settings
 
 /**
  * Get task with title #pomodoro
@@ -41,6 +41,8 @@ export function extractClick(pomodoroTask) {
  * @returns { HTMLElement }
  */
 export const convertTask = task => {
+    window.scoreGoodHabit = extractClick(task)
+
     const style =
         'background-color: gray !important; cursor: pointer; transition-duration: .15s; transition-property: border-color,background,color; transition - timing - function: ease-in;'
 
@@ -52,9 +54,10 @@ export const convertTask = task => {
     const rightControl = task.querySelector('.right-control')
     rightControl.innerHTML = stopSvg
     rightControl.setAttribute('style', style)
-    rightControl.onclick = resetTimer
+    rightControl.onclick = onRightControlClick
 
     const taskTitle = document.querySelector('.pomodoro-task .task-title')
+    const { workTime } = settings
     taskTitle.innerText = `🕐 ${workTime}:00`
 
     return task

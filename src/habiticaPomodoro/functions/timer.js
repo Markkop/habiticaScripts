@@ -1,9 +1,10 @@
 import { settings } from '../settings'
+import { updateCustomTimes } from './helper'
 
-const { workTime, playSvg, pauseSvg } = settings
-const workTimeInSeconds = workTime * 60
-let seconds = workTimeInSeconds
+const { playSvg, pauseSvg } = settings
+let seconds = 0
 let isPaused = true
+let isResting = false
 let interval = null
 let clock = 0
 
@@ -13,7 +14,9 @@ const clocks = ['🕐', '🕑', '🕒', '🕓', '🕔', '🕕', '🕖', '🕗', 
  * When the left side (Play/Pause) is clicked
  */
 export const onLeftControlClick = () => {
-    const hasStarted = seconds !== workTimeInSeconds
+    const { breakTime, workTime } = settings
+    const initialTime = isResting ? breakTime : workTime
+    const hasStarted = seconds !== initialTime * 60
     const hasEnded = seconds <= 0
 
     if (!hasStarted || hasEnded) {
@@ -21,6 +24,15 @@ export const onLeftControlClick = () => {
     } else {
         togglePaused()
     }
+}
+
+/**
+ * When the right side (Stop) is clicked
+ */
+export const onRightControlClick = () => {
+    updateCustomTimes()
+    isResting = false
+    resetTimer()
 }
 
 /**
@@ -49,10 +61,17 @@ const tickOneSecond = () => {
             clock++
         }
 
-        const hasEnded = seconds <= 0
+        const hasEnded = seconds < 0
         if (hasEnded) {
-            window.scoreGoodHabit()
-            resetTimer()
+            if (!isResting) {
+                isResting = true
+                resetTimer()
+                startTimer()
+            } else {
+                isResting = false
+                window.scoreGoodHabit()
+                resetTimer()
+            }
         }
     }
 }
@@ -61,6 +80,9 @@ const tickOneSecond = () => {
  * Start timer
  */
 const startTimer = () => {
+    const { breakTime, workTime } = settings
+    const initialTime = isResting ? breakTime : workTime
+    seconds = initialTime * 60
     const leftControl = document.querySelector('.pomodoro-task .left-control')
     leftControl.innerHTML = pauseSvg
     isPaused = false
@@ -81,11 +103,16 @@ const togglePaused = () => {
  * Resets timer
  */
 export const resetTimer = () => {
+    const { breakTime, workTime } = settings
     isPaused = true
-    seconds = workTimeInSeconds
+
     const leftControl = document.querySelector('.pomodoro-task .left-control')
     leftControl.innerHTML = playSvg
     const taskTitle = document.querySelector('.pomodoro-task .task-title')
-    taskTitle.innerText = `🕐 ${workTime}:00`
+
+    const time = isResting ? breakTime : workTime
+    taskTitle.innerText = `🕐 ${time}:00`
+    seconds = time * 60
+
     clearInterval(interval)
 }

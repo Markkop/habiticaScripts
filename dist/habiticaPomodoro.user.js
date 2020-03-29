@@ -49,8 +49,8 @@
     }
 
     const settings = {
-        workTime: 2,
-        breakTime: 1,
+        workTime: 25,
+        breakTime: 5,
         playSvg:
             '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M4 3.532l14.113 8.468-14.113 8.468v-16.936zm-2-3.532v24l20-12-20-12z"/></svg>',
         stopSvg:
@@ -59,10 +59,49 @@
             '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M18 2v20h-2v-20h2zm-10 0v20h-2v-20h2zm12-2h-6v24h6v-24zm-10 0h-6v24h6v-24z"/></svg>',
     };
 
-    const { workTime, playSvg, pauseSvg } = settings;
-    const workTimeInSeconds = workTime * 60;
-    let seconds = workTimeInSeconds;
+    /**
+     * @typedef CustomTimes
+     * @param { Number } workTime
+     * @param { Number } breakTime
+     */
+
+    /**
+     * Get work and break times from a text string
+     * @param { String } text
+     * @returns { CustomTimes }
+     */
+    const parseNotes = text => {
+        text = text.replace(/\:[0-9]*/g, '');
+        const [workTime, breakTime] = Array.from(text.match(/\d{1,2}/g)).map(Number);
+        if (workTime && breakTime) {
+            return { workTime, breakTime }
+        }
+        return null
+    };
+
+    /**
+     * Get custom times from task notes
+     * @returns { CustomTimes }
+     */
+    const getTimesFromTaskNotes = () => {
+        const taskNotes = document.querySelector('.pomodoro-task .task-notes') || {};
+        const text = taskNotes.innerText || '';
+        return parseNotes(text)
+    };
+
+    /**
+     * Update settings with custom times
+     */
+    const updateCustomTimes = () => {
+        const customTimes = getTimesFromTaskNotes();
+        settings.workTime = customTimes.workTime;
+        settings.breakTime = customTimes.breakTime;
+    };
+
+    const { playSvg, pauseSvg } = settings;
+    let seconds = 0;
     let isPaused = true;
+    let isResting = false;
     let interval = null;
     let clock = 0;
 
@@ -72,7 +111,9 @@
      * When the left side (Play/Pause) is clicked
      */
     const onLeftControlClick = () => {
-        const hasStarted = seconds !== workTimeInSeconds;
+        const { breakTime, workTime } = settings;
+        const initialTime = isResting ? breakTime : workTime;
+        const hasStarted = seconds !== initialTime * 60;
         const hasEnded = seconds <= 0;
 
         if (!hasStarted || hasEnded) {
@@ -80,6 +121,15 @@
         } else {
             togglePaused();
         }
+    };
+
+    /**
+     * When the right side (Stop) is clicked
+     */
+    const onRightControlClick = () => {
+        updateCustomTimes();
+        isResting = false;
+        resetTimer();
     };
 
     /**
@@ -108,10 +158,17 @@
                 clock++;
             }
 
-            const hasEnded = seconds <= 0;
+            const hasEnded = seconds < 0;
             if (hasEnded) {
-                window.scoreGoodHabit();
-                resetTimer();
+                if (!isResting) {
+                    isResting = true;
+                    resetTimer();
+                    startTimer();
+                } else {
+                    isResting = false;
+                    window.scoreGoodHabit();
+                    resetTimer();
+                }
             }
         }
     };
@@ -120,6 +177,9 @@
      * Start timer
      */
     const startTimer = () => {
+        const { breakTime, workTime } = settings;
+        const initialTime = isResting ? breakTime : workTime;
+        seconds = initialTime * 60;
         const leftControl = document.querySelector('.pomodoro-task .left-control');
         leftControl.innerHTML = pauseSvg;
         isPaused = false;
@@ -140,16 +200,21 @@
      * Resets timer
      */
     const resetTimer = () => {
+        const { breakTime, workTime } = settings;
         isPaused = true;
-        seconds = workTimeInSeconds;
+
         const leftControl = document.querySelector('.pomodoro-task .left-control');
         leftControl.innerHTML = playSvg;
         const taskTitle = document.querySelector('.pomodoro-task .task-title');
-        taskTitle.innerText = `🕐 ${workTime}:00`;
+
+        const time = isResting ? breakTime : workTime;
+        taskTitle.innerText = `🕐 ${time}:00`;
+        seconds = time * 60;
+
         clearInterval(interval);
     };
 
-    const { playSvg: playSvg$1, stopSvg, workTime: workTime$1 } = settings;
+    const { playSvg: playSvg$1, stopSvg } = settings;
 
     /**
      * Get task with title #pomodoro
@@ -189,6 +254,8 @@
      * @returns { HTMLElement }
      */
     const convertTask = task => {
+        window.scoreGoodHabit = extractClick(task);
+
         const style =
             'background-color: gray !important; cursor: pointer; transition-duration: .15s; transition-property: border-color,background,color; transition - timing - function: ease-in;';
 
@@ -200,10 +267,11 @@
         const rightControl = task.querySelector('.right-control');
         rightControl.innerHTML = stopSvg;
         rightControl.setAttribute('style', style);
-        rightControl.onclick = resetTimer;
+        rightControl.onclick = onRightControlClick;
 
         const taskTitle = document.querySelector('.pomodoro-task .task-title');
-        taskTitle.innerText = `🕐 ${workTime$1}:00`;
+        const { workTime } = settings;
+        taskTitle.innerText = `🕐 ${workTime}:00`;
 
         return task
     };
@@ -216,7 +284,7 @@
             logs('Starting habiticaPomodoro script');
             const pomodoroTask = await waitForExistance(getPomodoroTask);
             pomodoroTask.classList.add('pomodoro-task');
-            window.scoreGoodHabit = extractClick(pomodoroTask);
+            updateCustomTimes();
             convertTask(pomodoroTask);
         } catch (error) {
             logs('Error on habiticaPomodoro.user.js', { error });

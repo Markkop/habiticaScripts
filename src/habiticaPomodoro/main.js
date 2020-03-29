@@ -1,5 +1,6 @@
 import { logs, waitForExistance } from '../utils/common'
-import { getPomodoroTask, extractClick, convertTask } from './functions/element'
+import { getPomodoroTask, convertTask } from './functions/element'
+import { updateCustomTimes } from './functions/helper'
 
 /**
  * Execute this script
@@ -9,7 +10,7 @@ async function main() {
         logs('Starting habiticaPomodoro script')
         const pomodoroTask = await waitForExistance(getPomodoroTask)
         pomodoroTask.classList.add('pomodoro-task')
-        window.scoreGoodHabit = extractClick(pomodoroTask)
+        updateCustomTimes()
         convertTask(pomodoroTask)
     } catch (error) {
         logs('Error on habiticaPomodoro.user.js', { error })

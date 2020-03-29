@@ -1,6 +1,6 @@
 export const settings = {
-    workTime: 2,
-    breakTime: 1,
+    workTime: 25,
+    breakTime: 5,
     playSvg:
         '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M4 3.532l14.113 8.468-14.113 8.468v-16.936zm-2-3.532v24l20-12-20-12z"/></svg>',
     stopSvg:
