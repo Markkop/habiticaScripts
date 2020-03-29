@@ -72,7 +72,7 @@
      */
     const parseNotes = text => {
         text = text.replace(/\:[0-9]*/g, '');
-        const [workTime, breakTime] = Array.from(text.match(/\d{1,2}/g)).map(Number);
+        const [workTime, breakTime] = Array.from(text.match(/\d{1,2}/g) || []).map(Number);
         if (workTime && breakTime) {
             return { workTime, breakTime }
         }
@@ -94,11 +94,14 @@
      */
     const updateCustomTimes = () => {
         const customTimes = getTimesFromTaskNotes();
-        settings.workTime = customTimes.workTime;
-        settings.breakTime = customTimes.breakTime;
+        if (customTimes) {
+            settings.workTime = customTimes.workTime;
+            settings.breakTime = customTimes.breakTime;
+        }
     };
 
     const { playSvg, pauseSvg } = settings;
+    const minuteInSeconds = 60;
     let seconds = 0;
     let isPaused = true;
     let isResting = false;
@@ -113,7 +116,7 @@
     const onLeftControlClick = () => {
         const { breakTime, workTime } = settings;
         const initialTime = isResting ? breakTime : workTime;
-        const hasStarted = seconds !== initialTime * 60;
+        const hasStarted = seconds !== initialTime * minuteInSeconds;
         const hasEnded = seconds <= 0;
 
         if (!hasStarted || hasEnded) {
@@ -148,8 +151,9 @@
             const secondsToShow = Math.trunc(seconds % 60);
             const isOneDigit = String(secondsToShow).length === 1;
             const zeroDigit = isOneDigit ? '0' : '';
+            const extraText = isResting ? 'Descansando...' : 'Colhendo um pomoro';
 
-            taskTitle.innerText = `${clocks[clock]} ${minutes}:${zeroDigit}${secondsToShow}`;
+            taskTitle.innerText = `${clocks[clock]} ${minutes}:${zeroDigit}${secondsToShow} - ${extraText}`;
 
             const isLastClock = clock === clocks.length - 1;
             if (isLastClock) {
@@ -179,7 +183,7 @@
     const startTimer = () => {
         const { breakTime, workTime } = settings;
         const initialTime = isResting ? breakTime : workTime;
-        seconds = initialTime * 60;
+        seconds = initialTime * minuteInSeconds;
         const leftControl = document.querySelector('.pomodoro-task .left-control');
         leftControl.innerHTML = pauseSvg;
         isPaused = false;
@@ -209,7 +213,7 @@
 
         const time = isResting ? breakTime : workTime;
         taskTitle.innerText = `🕐 ${time}:00`;
-        seconds = time * 60;
+        seconds = time * minuteInSeconds;
 
         clearInterval(interval);
     };

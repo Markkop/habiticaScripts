@@ -52,8 +52,9 @@ const tickOneSecond = () => {
         const secondsToShow = Math.trunc(seconds % 60)
         const isOneDigit = String(secondsToShow).length === 1
         const zeroDigit = isOneDigit ? '0' : ''
+        const extraText = isResting ? 'Descansando...' : 'Colhendo um pomoro'
 
-        taskTitle.innerText = `${clocks[clock]} ${minutes}:${zeroDigit}${secondsToShow}`
+        taskTitle.innerText = `${clocks[clock]} ${minutes}:${zeroDigit}${secondsToShow} - ${extraText}`
 
         const isLastClock = clock === clocks.length - 1
         if (isLastClock) {
