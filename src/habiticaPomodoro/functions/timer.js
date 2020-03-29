@@ -2,6 +2,7 @@ import { settings } from '../settings'
 import { updateCustomTimes } from './helper'
 
 const { playSvg, pauseSvg } = settings
+const minuteInSeconds = 60
 let seconds = 0
 let isPaused = true
 let isResting = false
@@ -16,7 +17,7 @@ const clocks = ['🕐', '🕑', '🕒', '🕓', '🕔', '🕕', '🕖', '🕗', 
 export const onLeftControlClick = () => {
     const { breakTime, workTime } = settings
     const initialTime = isResting ? breakTime : workTime
-    const hasStarted = seconds !== initialTime * 60
+    const hasStarted = seconds !== initialTime * minuteInSeconds
     const hasEnded = seconds <= 0
 
     if (!hasStarted || hasEnded) {
@@ -82,7 +83,7 @@ const tickOneSecond = () => {
 const startTimer = () => {
     const { breakTime, workTime } = settings
     const initialTime = isResting ? breakTime : workTime
-    seconds = initialTime * 60
+    seconds = initialTime * minuteInSeconds
     const leftControl = document.querySelector('.pomodoro-task .left-control')
     leftControl.innerHTML = pauseSvg
     isPaused = false
@@ -112,7 +113,7 @@ export const resetTimer = () => {
 
     const time = isResting ? breakTime : workTime
     taskTitle.innerText = `🕐 ${time}:00`
-    seconds = time * 60
+    seconds = time * minuteInSeconds
 
     clearInterval(interval)
 }
