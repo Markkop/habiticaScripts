@@ -1,4 +1,4 @@
-import { getPomodoroTask, extractClick } from './element'
+import { getPomodoroTask, extractClick, convertTask } from './element'
 import fs from 'fs'
 import path from 'path'
 const tasksHtmlMock = fs.readFileSync(path.resolve(__dirname, '../mocks/tasks.html'), 'utf8')
@@ -48,5 +48,24 @@ describe('extractClick', () => {
 
         const click = extractClick(document)
         expect(typeof click).toBe('function')
+    })
+})
+
+describe('convertTask', () => {
+    beforeEach(() => {
+        document.body.innerHTML = pomodoroTaskMock
+    })
+
+    afterEach(() => {
+        document.body.innerHTML = ''
+    })
+
+    it('returns a task with new symbols', () => {
+        const task = document.querySelector('.task')
+        const iconBefore = document.querySelector('svg').innerHTML
+        const timerTask = convertTask(task)
+        expect(timerTask).toBeDefined()
+        const iconAfter = timerTask.querySelector('svg').innerHTML
+        expect(iconAfter).not.toEqual(iconBefore)
     })
 })
