@@ -52,12 +52,11 @@
         workTime: 25,
         breakTime: 5,
         noSounds: false,
-        playSvg:
-            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M4 3.532l14.113 8.468-14.113 8.468v-16.936zm-2-3.532v24l20-12-20-12z"/></svg>',
-        stopSvg:
-            '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M22 2v20h-20v-20h20zm2-2h-24v24h24v-24z"/></svg>',
-        pauseSvg:
-            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M18 2v20h-2v-20h2zm-10 0v20h-2v-20h2zm12-2h-6v24h6v-24zm-10 0h-6v24h6v-24z"/></svg>',
+        playIcon: '🍅',
+        stopIcon:
+            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M18.885 3.515c-4.617-4.618-12.056-4.676-16.756-.195l-2.129-2.258v7.938h7.484l-2.066-2.191c2.82-2.706 7.297-2.676 10.073.1 4.341 4.341 1.737 12.291-5.491 12.291v4.8c3.708 0 6.614-1.244 8.885-3.515 4.686-4.686 4.686-12.284 0-16.97z"/></svg>',
+        playRestingIcon: '💤',
+        idleIcon: '⌛️',
     };
 
     /**
@@ -124,7 +123,7 @@
         audioPlayer.play();
     };
 
-    const { playSvg, pauseSvg } = settings;
+    const { playIcon, playRestingIcon, idleIcon } = settings;
     const minuteInSeconds = 60;
     let seconds = 0;
     let isPaused = true;
@@ -156,6 +155,7 @@
     const onRightControlClick = () => {
         updateCustomTimes();
         isResting = false;
+        clock = 0;
         resetTimer();
     };
 
@@ -166,6 +166,7 @@
      */
     const tickOneSecond = () => {
         const taskTitle = document.querySelector('.pomodoro-task .task-title');
+        const leftIcon = document.querySelector('.timer-icon-left');
         return () => {
             if (isPaused) {
                 return
@@ -175,10 +176,11 @@
             const secondsToShow = Math.trunc(seconds % 60);
             const isOneDigit = String(secondsToShow).length === 1;
             const zeroDigit = isOneDigit ? '0' : '';
-            const extraText = isResting ? 'Descansando...' : 'Colhendo um pomoro';
+            const extraText = isResting ? 'Descansando...' : 'Colhendo um pomodoro...';
+            const titleIcon = isResting ? playRestingIcon : playIcon;
+            taskTitle.innerText = `${titleIcon} ${minutes}:${zeroDigit}${secondsToShow} - ${extraText}`;
 
-            taskTitle.innerText = `${clocks[clock]} ${minutes}:${zeroDigit}${secondsToShow} - ${extraText}`;
-
+            leftIcon.innerHTML = clocks[clock];
             const isLastClock = clock === clocks.length - 1;
             if (isLastClock) {
                 clock = 0;
@@ -210,8 +212,6 @@
         const { breakTime, workTime } = settings;
         const initialTime = isResting ? breakTime : workTime;
         seconds = initialTime * minuteInSeconds;
-        const leftControl = document.querySelector('.pomodoro-task .left-control');
-        leftControl.innerHTML = pauseSvg;
         isPaused = false;
         tickOneSecond()();
         interval = setInterval(tickOneSecond(), 1000);
@@ -222,8 +222,11 @@
      */
     const togglePaused = () => {
         isPaused = !isPaused;
-        const leftControl = document.querySelector('.pomodoro-task .left-control');
-        leftControl.innerHTML = isPaused ? playSvg : pauseSvg;
+        const currentplayIcon = isResting ? playRestingIcon : playIcon;
+        const clockIcon = clocks[clock];
+
+        const leftIcon = document.querySelector('.timer-icon-left');
+        leftIcon.innerHTML = isPaused ? currentplayIcon : clockIcon;
     };
 
     /**
@@ -233,18 +236,18 @@
         const { breakTime, workTime } = settings;
         isPaused = true;
 
-        const leftControl = document.querySelector('.pomodoro-task .left-control');
-        leftControl.innerHTML = playSvg;
-        const taskTitle = document.querySelector('.pomodoro-task .task-title');
+        const leftIcon = document.querySelector('.timer-icon-left');
+        leftIcon.innerHTML = playIcon;
 
+        const taskTitle = document.querySelector('.pomodoro-task .task-title');
         const time = isResting ? breakTime : workTime;
-        taskTitle.innerText = `🕐 ${time}:00`;
+        taskTitle.innerText = `${idleIcon} ${time}:00`;
         seconds = time * minuteInSeconds;
 
         clearInterval(interval);
     };
 
-    const { playSvg: playSvg$1, stopSvg } = settings;
+    const { playIcon: playIcon$1, stopIcon, idleIcon: idleIcon$1 } = settings;
 
     /**
      * Get task with title #pomodoro
@@ -289,21 +292,21 @@
         window.scoreGoodHabit = extractClick(task);
 
         const style =
-            'background-color: gray !important; cursor: pointer; transition-duration: .15s; transition-property: border-color,background,color; transition - timing - function: ease-in;';
+            'background-color: #50b5e9 !important; cursor: pointer; transition-duration: .15s; transition-property: border-color,background,color; transition - timing - function: ease-in;';
 
         const leftControl = task.querySelector('.left-control');
-        leftControl.innerHTML = playSvg$1;
+        leftControl.innerHTML = `<span class='timer-icon-left' style='font-size: 20px' >${playIcon$1}<span>`;
         leftControl.setAttribute('style', style);
         leftControl.onclick = onLeftControlClick;
 
         const rightControl = task.querySelector('.right-control');
-        rightControl.innerHTML = stopSvg;
+        rightControl.innerHTML = `<span class='timer-icon-right' style='font-size: 20px' >${stopIcon}<span>`;
         rightControl.setAttribute('style', style);
         rightControl.onclick = onRightControlClick;
 
         const taskTitle = task.querySelector('.task-title');
         const { workTime } = settings;
-        taskTitle.innerText = `🕐 ${workTime}:00`;
+        taskTitle.innerText = `${idleIcon$1} ${workTime}:00`;
 
         return task
     };

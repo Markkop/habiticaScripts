@@ -2,7 +2,7 @@ import { settings } from '../settings'
 import { onLeftControlClick, onRightControlClick } from './timer'
 import { updateCustomTimes } from './helper'
 
-const { playSvg, stopSvg } = settings
+const { playIcon, stopIcon, idleIcon } = settings
 
 /**
  * Get task with title #pomodoro
@@ -47,21 +47,21 @@ export const convertTask = task => {
     window.scoreGoodHabit = extractClick(task)
 
     const style =
-        'background-color: gray !important; cursor: pointer; transition-duration: .15s; transition-property: border-color,background,color; transition - timing - function: ease-in;'
+        'background-color: #50b5e9 !important; cursor: pointer; transition-duration: .15s; transition-property: border-color,background,color; transition - timing - function: ease-in;'
 
     const leftControl = task.querySelector('.left-control')
-    leftControl.innerHTML = playSvg
+    leftControl.innerHTML = `<span class='timer-icon-left' style='font-size: 20px' >${playIcon}<span>`
     leftControl.setAttribute('style', style)
     leftControl.onclick = onLeftControlClick
 
     const rightControl = task.querySelector('.right-control')
-    rightControl.innerHTML = stopSvg
+    rightControl.innerHTML = `<span class='timer-icon-right' style='font-size: 20px' >${stopIcon}<span>`
     rightControl.setAttribute('style', style)
     rightControl.onclick = onRightControlClick
 
     const taskTitle = task.querySelector('.task-title')
     const { workTime } = settings
-    taskTitle.innerText = `🕐 ${workTime}:00`
+    taskTitle.innerText = `${idleIcon} ${workTime}:00`
 
     return task
 }
