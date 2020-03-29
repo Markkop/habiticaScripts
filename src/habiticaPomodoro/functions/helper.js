@@ -40,3 +40,26 @@ export const updateCustomTimes = () => {
         settings.breakTime = customTimes.breakTime
     }
 }
+
+/**
+ * Plays a sound
+ * Habitica Sounds Names:
+ * 'Achievement_Unlocked','Chat','Daily','Death',
+ * 'Item_Drop','Level_Up','Minus_Habit','Plus_Habit',
+ * 'Reward','Todo'
+ * @param { String } sound name
+ */
+export const playSound = sound => {
+    const { noSounds } = settings
+    if (noSounds) {
+        return
+    }
+
+    let audioPlayer = document.querySelector('#player')
+    if (!audioPlayer) {
+        audioPlayer = document.createElement('audio')
+        audioPlayer.id = 'player'
+    }
+    audioPlayer.src = `https://habitica.com/static/audio/danielTheBard/${sound}.ogg`
+    audioPlayer.play()
+}

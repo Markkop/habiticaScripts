@@ -1,5 +1,5 @@
 import { settings } from '../settings'
-import { updateCustomTimes } from './helper'
+import { updateCustomTimes, playSound } from './helper'
 
 const { playSvg, pauseSvg } = settings
 const minuteInSeconds = 60
@@ -66,10 +66,12 @@ const tickOneSecond = () => {
         const hasEnded = seconds < 0
         if (hasEnded) {
             if (!isResting) {
+                playSound('Todo')
                 isResting = true
                 resetTimer()
                 startTimer()
             } else {
+                playSound('Chat')
                 isResting = false
                 window.scoreGoodHabit()
                 resetTimer()

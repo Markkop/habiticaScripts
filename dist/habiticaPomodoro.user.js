@@ -51,6 +51,7 @@
     const settings = {
         workTime: 25,
         breakTime: 5,
+        noSounds: false,
         playSvg:
             '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M4 3.532l14.113 8.468-14.113 8.468v-16.936zm-2-3.532v24l20-12-20-12z"/></svg>',
         stopSvg:
@@ -98,6 +99,29 @@
             settings.workTime = customTimes.workTime;
             settings.breakTime = customTimes.breakTime;
         }
+    };
+
+    /**
+     * Plays a sound
+     * Habitica Sounds Names:
+     * 'Achievement_Unlocked','Chat','Daily','Death',
+     * 'Item_Drop','Level_Up','Minus_Habit','Plus_Habit',
+     * 'Reward','Todo'
+     * @param { String } sound name
+     */
+    const playSound = sound => {
+        const { noSounds } = settings;
+        if (noSounds) {
+            return
+        }
+
+        let audioPlayer = document.querySelector('#player');
+        if (!audioPlayer) {
+            audioPlayer = document.createElement('audio');
+            audioPlayer.id = 'player';
+        }
+        audioPlayer.src = `https://habitica.com/static/audio/danielTheBard/${sound}.ogg`;
+        audioPlayer.play();
     };
 
     const { playSvg, pauseSvg } = settings;
@@ -165,10 +189,12 @@
             const hasEnded = seconds < 0;
             if (hasEnded) {
                 if (!isResting) {
+                    playSound('Todo');
                     isResting = true;
                     resetTimer();
                     startTimer();
                 } else {
+                    playSound('Chat');
                     isResting = false;
                     window.scoreGoodHabit();
                     resetTimer();
