@@ -1,20 +1,76 @@
-const playSvg =
-    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M4 3.532l14.113 8.468-14.113 8.468v-16.936zm-2-3.532v24l20-12-20-12z"/></svg>'
-const stopSvg =
-    '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M22 2v20h-20v-20h20zm2-2h-24v24h24v-24z"/></svg>'
+import { settings } from '../settings'
+
+const { workTime, playSvg, pauseSvg, stopSvg } = settings
+const workTimeInSeconds = workTime * 60
+let seconds = workTimeInSeconds
+let isPaused = true
+let interval = null
 
 /**
- * Convert task to timer
- * @param { HTMLElement } task
- * @returns { HTMLElement }
+ * When the left side (Play/Pause) is clicked
  */
-export const convertTask = task => {
-    const leftControl = task.querySelector('.left-control')
-    leftControl.innerHTML = playSvg
-    const svgMinusDiv = task.querySelector('.right-control')
-    svgMinusDiv.innerHTML = stopSvg
+export const onLeftControlClick = () => {
+    console.log({ interval }, { seconds }, { isPaused })
+    const hasStarted = seconds !== workTimeInSeconds
+    const hasEnded = seconds <= 0
 
-    const left = task.querySelector('.left-control')
-    left.onclick = () => console.log('Pause timer')
-    return task
+    if (!hasStarted || hasEnded) {
+        startTimer()
+    } else {
+        togglePaused()
+    }
 }
+
+/**
+ * A high order function to return the function that runs
+ * on every interval's tick
+ * @returns { Function }
+ */
+const onEachTick = () => {
+    const taskTitle = document.querySelector('.pomodoro-task .task-title')
+    const leftControl = document.querySelector('.pomodoro-task .left-control')
+
+    return () => {
+        console.log({ interval }, { seconds }, { isPaused })
+
+        if (isPaused) {
+            return
+        }
+        seconds--
+        // const seconds = seconds / 100
+        const minutes = Math.floor(seconds / 60)
+        const secondsToShow = Math.trunc(minutes % seconds)
+        taskTitle.innerText = `${minutes}:${secondsToShow}`
+
+        if (seconds <= 0) {
+            taskTitle.innerText = `${workTime}:00`
+            leftControl.innerHTML = playSvg
+            clearInterval(interval)
+        }
+    }
+}
+
+/**
+ * Start timer
+ */
+const startTimer = () => {
+    const leftControl = document.querySelector('.pomodoro-task .left-control')
+    leftControl.innerHTML = pauseSvg
+    seconds = workTimeInSeconds
+    isPaused = false
+    interval = setInterval(onEachTick(), 1000)
+}
+
+/**
+ * Changes between paused and running
+ */
+const togglePaused = () => {
+    isPaused = !isPaused
+    const leftControl = document.querySelector('.pomodoro-task .left-control')
+    leftControl.innerHTML = isPaused ? playSvg : pauseSvg
+}
+
+/**
+ * Resets timer
+ */
+const stopTimer = timer => clearInterval(timer)

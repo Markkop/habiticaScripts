@@ -1,3 +1,8 @@
+import { settings } from '../settings'
+import { onLeftControlClick } from './timer'
+
+const { playSvg, stopSvg, workTime } = settings
+
 /**
  * Get task with title #pomodoro
  * @returns { HTMLDivElement } habit task
@@ -28,4 +33,24 @@ export function extractClick(pomodoroTask) {
     if (!isClickFunction) return null
 
     return () => plusSign.click()
+}
+
+/**
+ * Convert task to timer
+ * @param { HTMLElement } task
+ * @returns { HTMLElement }
+ */
+export const convertTask = task => {
+    const leftControl = task.querySelector('.left-control')
+    leftControl.innerHTML = playSvg
+    const svgMinusDiv = task.querySelector('.right-control')
+    svgMinusDiv.innerHTML = stopSvg
+
+    const taskTitle = document.querySelector('.pomodoro-task .task-title')
+    taskTitle.innerText = `${workTime}:00`
+
+    const left = task.querySelector('.left-control')
+    left.onclick = onLeftControlClick
+
+    return task
 }

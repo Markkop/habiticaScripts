@@ -1,6 +1,5 @@
 import { logs, waitForExistance } from '../utils/common'
-import { getPomodoroTask, extractClick } from './functions/element'
-import { convertTask } from './functions/timer'
+import { getPomodoroTask, extractClick, convertTask } from './functions/element'
 
 /**
  * Execute this script
@@ -9,6 +8,7 @@ async function main() {
     try {
         logs('Starting habiticaPomodoro script')
         const pomodoroTask = await waitForExistance(getPomodoroTask)
+        pomodoroTask.classList.add('pomodoro-task')
         window.clickPlus = extractClick(pomodoroTask)
         convertTask(pomodoroTask)
     } catch (error) {
