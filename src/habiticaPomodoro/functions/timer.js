@@ -26,7 +26,7 @@ export const onLeftControlClick = () => {
  * on every interval's tick
  * @returns { Function }
  */
-const onEachTick = () => {
+const tickOneSecond = () => {
     const taskTitle = document.querySelector('.pomodoro-task .task-title')
     const leftControl = document.querySelector('.pomodoro-task .left-control')
 
@@ -39,7 +39,7 @@ const onEachTick = () => {
         seconds--
         // const seconds = seconds / 100
         const minutes = Math.floor(seconds / 60)
-        const secondsToShow = Math.trunc(minutes % seconds)
+        const secondsToShow = Math.trunc(seconds % 60)
         taskTitle.innerText = `${minutes}:${secondsToShow}`
 
         if (seconds <= 0) {
@@ -56,9 +56,9 @@ const onEachTick = () => {
 const startTimer = () => {
     const leftControl = document.querySelector('.pomodoro-task .left-control')
     leftControl.innerHTML = pauseSvg
-    seconds = workTimeInSeconds
     isPaused = false
-    interval = setInterval(onEachTick(), 1000)
+    tickOneSecond()()
+    interval = setInterval(tickOneSecond(), 1000)
 }
 
 /**
