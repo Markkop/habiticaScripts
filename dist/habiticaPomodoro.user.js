@@ -59,17 +59,19 @@
             '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M18 2v20h-2v-20h2zm-10 0v20h-2v-20h2zm12-2h-6v24h6v-24zm-10 0h-6v24h6v-24z"/></svg>',
     };
 
-    const { workTime, playSvg, pauseSvg, stopSvg } = settings;
+    const { workTime, playSvg, pauseSvg } = settings;
     const workTimeInSeconds = workTime * 60;
     let seconds = workTimeInSeconds;
     let isPaused = true;
     let interval = null;
+    let clock = 0;
+
+    const clocks = ['🕐', '🕑', '🕒', '🕓', '🕔', '🕕', '🕖', '🕗', '🕘', '🕙', '🕚', '🕛'];
 
     /**
      * When the left side (Play/Pause) is clicked
      */
     const onLeftControlClick = () => {
-        console.log({ interval }, { seconds }, { isPaused });
         const hasStarted = seconds !== workTimeInSeconds;
         const hasEnded = seconds <= 0;
 
@@ -87,24 +89,29 @@
      */
     const tickOneSecond = () => {
         const taskTitle = document.querySelector('.pomodoro-task .task-title');
-        const leftControl = document.querySelector('.pomodoro-task .left-control');
-
         return () => {
-            console.log({ interval }, { seconds }, { isPaused });
-
             if (isPaused) {
                 return
             }
             seconds--;
-            // const seconds = seconds / 100
             const minutes = Math.floor(seconds / 60);
             const secondsToShow = Math.trunc(seconds % 60);
-            taskTitle.innerText = `${minutes}:${secondsToShow}`;
+            const isOneDigit = String(secondsToShow).length === 1;
+            const zeroDigit = isOneDigit ? '0' : '';
 
-            if (seconds <= 0) {
-                taskTitle.innerText = `${workTime}:00`;
-                leftControl.innerHTML = playSvg;
-                clearInterval(interval);
+            taskTitle.innerText = `${clocks[clock]} ${minutes}:${zeroDigit}${secondsToShow}`;
+
+            const isLastClock = clock === clocks.length - 1;
+            if (isLastClock) {
+                clock = 0;
+            } else {
+                clock++;
+            }
+
+            const hasEnded = seconds <= 0;
+            if (hasEnded) {
+                window.scoreGoodHabit();
+                resetTimer();
             }
         }
     };
@@ -129,7 +136,20 @@
         leftControl.innerHTML = isPaused ? playSvg : pauseSvg;
     };
 
-    const { playSvg: playSvg$1, stopSvg: stopSvg$1, workTime: workTime$1 } = settings;
+    /**
+     * Resets timer
+     */
+    const resetTimer = () => {
+        isPaused = true;
+        seconds = workTimeInSeconds;
+        const leftControl = document.querySelector('.pomodoro-task .left-control');
+        leftControl.innerHTML = playSvg;
+        const taskTitle = document.querySelector('.pomodoro-task .task-title');
+        taskTitle.innerText = `🕐 ${workTime}:00`;
+        clearInterval(interval);
+    };
+
+    const { playSvg: playSvg$1, stopSvg, workTime: workTime$1 } = settings;
 
     /**
      * Get task with title #pomodoro
@@ -169,16 +189,21 @@
      * @returns { HTMLElement }
      */
     const convertTask = task => {
+        const style =
+            'background-color: gray !important; cursor: pointer; transition-duration: .15s; transition-property: border-color,background,color; transition - timing - function: ease-in;';
+
         const leftControl = task.querySelector('.left-control');
         leftControl.innerHTML = playSvg$1;
-        const svgMinusDiv = task.querySelector('.right-control');
-        svgMinusDiv.innerHTML = stopSvg$1;
+        leftControl.setAttribute('style', style);
+        leftControl.onclick = onLeftControlClick;
+
+        const rightControl = task.querySelector('.right-control');
+        rightControl.innerHTML = stopSvg;
+        rightControl.setAttribute('style', style);
+        rightControl.onclick = resetTimer;
 
         const taskTitle = document.querySelector('.pomodoro-task .task-title');
-        taskTitle.innerText = `${workTime$1}:00`;
-
-        const left = task.querySelector('.left-control');
-        left.onclick = onLeftControlClick;
+        taskTitle.innerText = `🕐 ${workTime$1}:00`;
 
         return task
     };
@@ -191,7 +216,7 @@
             logs('Starting habiticaPomodoro script');
             const pomodoroTask = await waitForExistance(getPomodoroTask);
             pomodoroTask.classList.add('pomodoro-task');
-            window.clickPlus = extractClick(pomodoroTask);
+            window.scoreGoodHabit = extractClick(pomodoroTask);
             convertTask(pomodoroTask);
         } catch (error) {
             logs('Error on habiticaPomodoro.user.js', { error });

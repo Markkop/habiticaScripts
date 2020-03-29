@@ -9,7 +9,7 @@ async function main() {
         logs('Starting habiticaPomodoro script')
         const pomodoroTask = await waitForExistance(getPomodoroTask)
         pomodoroTask.classList.add('pomodoro-task')
-        window.clickPlus = extractClick(pomodoroTask)
+        window.scoreGoodHabit = extractClick(pomodoroTask)
         convertTask(pomodoroTask)
     } catch (error) {
         logs('Error on habiticaPomodoro.user.js', { error })

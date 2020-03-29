@@ -1,5 +1,5 @@
 import { settings } from '../settings'
-import { onLeftControlClick } from './timer'
+import { onLeftControlClick, resetTimer } from './timer'
 
 const { playSvg, stopSvg, workTime } = settings
 
@@ -41,16 +41,21 @@ export function extractClick(pomodoroTask) {
  * @returns { HTMLElement }
  */
 export const convertTask = task => {
+    const style =
+        'background-color: gray !important; cursor: pointer; transition-duration: .15s; transition-property: border-color,background,color; transition - timing - function: ease-in;'
+
     const leftControl = task.querySelector('.left-control')
     leftControl.innerHTML = playSvg
-    const svgMinusDiv = task.querySelector('.right-control')
-    svgMinusDiv.innerHTML = stopSvg
+    leftControl.setAttribute('style', style)
+    leftControl.onclick = onLeftControlClick
+
+    const rightControl = task.querySelector('.right-control')
+    rightControl.innerHTML = stopSvg
+    rightControl.setAttribute('style', style)
+    rightControl.onclick = resetTimer
 
     const taskTitle = document.querySelector('.pomodoro-task .task-title')
-    taskTitle.innerText = `${workTime}:00`
-
-    const left = task.querySelector('.left-control')
-    left.onclick = onLeftControlClick
+    taskTitle.innerText = `🕐 ${workTime}:00`
 
     return task
 }
