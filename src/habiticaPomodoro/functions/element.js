@@ -1,6 +1,6 @@
 import { settings } from '../settings'
 import { onLeftControlClick, onRightControlClick } from './timer'
-import { updateCustomTimes } from './helper'
+import { updateCustomTimes, formatTitle } from './helper'
 
 const { playIcon, stopIcon, idleIcon } = settings
 
@@ -61,7 +61,7 @@ export const convertTask = task => {
 
     const taskTitle = task.querySelector('.task-title')
     const { workTime } = settings
-    taskTitle.innerText = `${idleIcon} ${workTime}:00`
+    taskTitle.innerText = formatTitle(idleIcon, workTime)
 
     return task
 }

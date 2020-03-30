@@ -2,22 +2,37 @@ import { settings } from '../settings'
 
 /**
  * @typedef CustomTimes
- * @param { Number } workTime
- * @param { Number } breakTime
+ * @param { Number } workTime in seconds
+ * @param { Number } breakTime in seconds
  */
 
 /**
- * Get work and break times from a text string
+ * Get work and break times from a text string, matching
+ * both formats: "10min / 5min", "10:00 / 05:00"
  * @param { String } text
  * @returns { CustomTimes }
  */
 const parseNotes = text => {
-    text = text.replace(/\:[0-9]*/g, '')
-    const [workTime, breakTime] = Array.from(text.match(/\d{1,2}/g) || []).map(Number)
-    if (workTime && breakTime) {
-        return { workTime, breakTime }
+    const times = Array.from(text.match(/\d{1,2}/g) || []).map(Number)
+    if (!times) {
+        return null
     }
-    return null
+
+    let workTime = 0
+    let breakTime = 0
+    if (times.length === 4) {
+        workTime = times[0] + times[1] / 60
+        breakTime = times[2] + times[3] / 60
+    }
+
+    if (times.length === 2) {
+        workTime = times[0]
+        breakTime = times[1]
+    }
+
+    workTime *= 60
+    breakTime *= 60
+    return { workTime, breakTime }
 }
 
 /**
@@ -62,4 +77,47 @@ export const playSound = sound => {
     }
     audioPlayer.src = `https://habitica.com/static/audio/danielTheBard/${sound}.ogg`
     audioPlayer.play()
+}
+
+/**
+ * Set task title
+ * @param { String } newTitle new title
+ * @param { HTMLElement } [titleElement]
+ */
+export const setTitle = (newTitle, titleElement) => {
+    if (!titleElement) {
+        titleElement = document.querySelector('.pomodoro-task .task-title')
+    }
+    taskTitle.innerText = newTitle
+}
+
+/**
+ * Puts a zero in front of single digits
+ * @param { Number } number
+ * @returns { String } number with two digits
+ */
+const formatOneDigit = number => {
+    const numberStringified = String(number)
+    const digits = numberStringified.length
+    const hasOneDigit = digits === 1
+    return hasOneDigit ? `0${number}` : numberStringified
+}
+
+/**
+ * Formats task title
+ * @param { String } icon
+ * @param { Number } time in seconds
+ */
+export const formatTitle = (icon, time) => {
+    let minutes = ''
+    let seconds = ''
+    if (time < 60) {
+        minutes = '00'
+        seconds = formatOneDigit(time)
+    } else {
+        time = time / 60
+        minutes = formatOneDigit(Math.trunc(time))
+        seconds = formatOneDigit(Math.round((time - minutes) * 60))
+    }
+    return `${icon} ${minutes}:${seconds}`
 }

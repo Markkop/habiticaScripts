@@ -1,8 +1,7 @@
 import { settings } from '../settings'
-import { updateCustomTimes, playSound } from './helper'
+import { updateCustomTimes, playSound, formatTitle } from './helper'
 
 const { playIcon, playRestingIcon, idleIcon } = settings
-const minuteInSeconds = 60
 let seconds = 0
 let isPaused = true
 let isResting = false
@@ -17,7 +16,7 @@ const clocks = ['🕐', '🕑', '🕒', '🕓', '🕔', '🕕', '🕖', '🕗', 
 export const onLeftControlClick = () => {
     const { breakTime, workTime } = settings
     const initialTime = isResting ? breakTime : workTime
-    const hasStarted = seconds !== initialTime * minuteInSeconds
+    const hasStarted = seconds !== initialTime
     const hasEnded = seconds <= 0
 
     if (!hasStarted || hasEnded) {
@@ -50,13 +49,9 @@ const tickOneSecond = () => {
             return
         }
         seconds--
-        const minutes = Math.floor(seconds / 60)
-        const secondsToShow = Math.trunc(seconds % 60)
-        const isOneDigit = String(secondsToShow).length === 1
-        const zeroDigit = isOneDigit ? '0' : ''
         const extraText = isResting ? 'Descansando...' : 'Colhendo um pomodoro...'
         const titleIcon = isResting ? playRestingIcon : playIcon
-        taskTitle.innerText = `${titleIcon} ${minutes}:${zeroDigit}${secondsToShow} - ${extraText}`
+        taskTitle.innerText = `${formatTitle(titleIcon, seconds)} - ${extraText}`
 
         leftIcon.innerHTML = clocks[clock]
         const isLastClock = clock === clocks.length - 1
@@ -67,18 +62,20 @@ const tickOneSecond = () => {
         }
 
         const hasEnded = seconds < 0
-        if (hasEnded) {
-            if (!isResting) {
-                playSound('Todo')
-                isResting = true
-                resetTimer()
-                startTimer()
-            } else {
-                playSound('Chat')
-                isResting = false
-                window.scoreGoodHabit()
-                resetTimer()
-            }
+        if (!hasEnded) {
+            return
+        }
+
+        if (!isResting) {
+            playSound('Todo')
+            isResting = true
+            resetTimer()
+            startTimer()
+        } else {
+            playSound('Chat')
+            isResting = false
+            window.scoreGoodHabit()
+            resetTimer()
         }
     }
 }
@@ -89,7 +86,7 @@ const tickOneSecond = () => {
 const startTimer = () => {
     const { breakTime, workTime } = settings
     const initialTime = isResting ? breakTime : workTime
-    seconds = initialTime * minuteInSeconds
+    seconds = initialTime
     isPaused = false
     tickOneSecond()()
     interval = setInterval(tickOneSecond(), 1000)
@@ -119,8 +116,8 @@ export const resetTimer = () => {
 
     const taskTitle = document.querySelector('.pomodoro-task .task-title')
     const time = isResting ? breakTime : workTime
-    taskTitle.innerText = `${idleIcon} ${time}:00`
-    seconds = time * minuteInSeconds
+    taskTitle.innerText = formatTitle(idleIcon, time)
+    seconds = time
 
     clearInterval(interval)
 }

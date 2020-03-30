@@ -1,6 +1,6 @@
 export const settings = {
-    workTime: 25,
-    breakTime: 5,
+    workTime: 25 * 60,
+    breakTime: 5 * 60,
     noSounds: false,
     playIcon: '🍅',
     stopIcon:

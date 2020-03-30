@@ -49,8 +49,8 @@
     }
 
     const settings = {
-        workTime: 25,
-        breakTime: 5,
+        workTime: 25 * 60,
+        breakTime: 5 * 60,
         noSounds: false,
         playIcon: '🍅',
         stopIcon:
@@ -61,22 +61,37 @@
 
     /**
      * @typedef CustomTimes
-     * @param { Number } workTime
-     * @param { Number } breakTime
+     * @param { Number } workTime in seconds
+     * @param { Number } breakTime in seconds
      */
 
     /**
-     * Get work and break times from a text string
+     * Get work and break times from a text string, matching
+     * both formats: "10min / 5min", "10:00 / 05:00"
      * @param { String } text
      * @returns { CustomTimes }
      */
     const parseNotes = text => {
-        text = text.replace(/\:[0-9]*/g, '');
-        const [workTime, breakTime] = Array.from(text.match(/\d{1,2}/g) || []).map(Number);
-        if (workTime && breakTime) {
-            return { workTime, breakTime }
+        const times = Array.from(text.match(/\d{1,2}/g) || []).map(Number);
+        if (!times) {
+            return null
         }
-        return null
+
+        let workTime = 0;
+        let breakTime = 0;
+        if (times.length === 4) {
+            workTime = times[0] + times[1] / 60;
+            breakTime = times[2] + times[3] / 60;
+        }
+
+        if (times.length === 2) {
+            workTime = times[0];
+            breakTime = times[1];
+        }
+
+        workTime *= 60;
+        breakTime *= 60;
+        return { workTime, breakTime }
     };
 
     /**
@@ -123,8 +138,38 @@
         audioPlayer.play();
     };
 
+    /**
+     * Puts a zero in front of single digits
+     * @param { Number } number
+     * @returns { String } number with two digits
+     */
+    const formatOneDigit = number => {
+        const numberStringified = String(number);
+        const digits = numberStringified.length;
+        const hasOneDigit = digits === 1;
+        return hasOneDigit ? `0${number}` : numberStringified
+    };
+
+    /**
+     * Formats task title
+     * @param { String } icon
+     * @param { Number } time in seconds
+     */
+    const formatTitle = (icon, time) => {
+        let minutes = '';
+        let seconds = '';
+        if (time < 60) {
+            minutes = '00';
+            seconds = formatOneDigit(time);
+        } else {
+            time = time / 60;
+            minutes = formatOneDigit(Math.trunc(time));
+            seconds = formatOneDigit(Math.round((time - minutes) * 60));
+        }
+        return `${icon} ${minutes}:${seconds}`
+    };
+
     const { playIcon, playRestingIcon, idleIcon } = settings;
-    const minuteInSeconds = 60;
     let seconds = 0;
     let isPaused = true;
     let isResting = false;
@@ -139,7 +184,7 @@
     const onLeftControlClick = () => {
         const { breakTime, workTime } = settings;
         const initialTime = isResting ? breakTime : workTime;
-        const hasStarted = seconds !== initialTime * minuteInSeconds;
+        const hasStarted = seconds !== initialTime;
         const hasEnded = seconds <= 0;
 
         if (!hasStarted || hasEnded) {
@@ -172,13 +217,9 @@
                 return
             }
             seconds--;
-            const minutes = Math.floor(seconds / 60);
-            const secondsToShow = Math.trunc(seconds % 60);
-            const isOneDigit = String(secondsToShow).length === 1;
-            const zeroDigit = isOneDigit ? '0' : '';
             const extraText = isResting ? 'Descansando...' : 'Colhendo um pomodoro...';
             const titleIcon = isResting ? playRestingIcon : playIcon;
-            taskTitle.innerText = `${titleIcon} ${minutes}:${zeroDigit}${secondsToShow} - ${extraText}`;
+            taskTitle.innerText = `${formatTitle(titleIcon, seconds)} - ${extraText}`;
 
             leftIcon.innerHTML = clocks[clock];
             const isLastClock = clock === clocks.length - 1;
@@ -189,18 +230,20 @@
             }
 
             const hasEnded = seconds < 0;
-            if (hasEnded) {
-                if (!isResting) {
-                    playSound('Todo');
-                    isResting = true;
-                    resetTimer();
-                    startTimer();
-                } else {
-                    playSound('Chat');
-                    isResting = false;
-                    window.scoreGoodHabit();
-                    resetTimer();
-                }
+            if (!hasEnded) {
+                return
+            }
+
+            if (!isResting) {
+                playSound('Todo');
+                isResting = true;
+                resetTimer();
+                startTimer();
+            } else {
+                playSound('Chat');
+                isResting = false;
+                window.scoreGoodHabit();
+                resetTimer();
             }
         }
     };
@@ -211,7 +254,7 @@
     const startTimer = () => {
         const { breakTime, workTime } = settings;
         const initialTime = isResting ? breakTime : workTime;
-        seconds = initialTime * minuteInSeconds;
+        seconds = initialTime;
         isPaused = false;
         tickOneSecond()();
         interval = setInterval(tickOneSecond(), 1000);
@@ -241,8 +284,8 @@
 
         const taskTitle = document.querySelector('.pomodoro-task .task-title');
         const time = isResting ? breakTime : workTime;
-        taskTitle.innerText = `${idleIcon} ${time}:00`;
-        seconds = time * minuteInSeconds;
+        taskTitle.innerText = formatTitle(idleIcon, time);
+        seconds = time;
 
         clearInterval(interval);
     };
@@ -306,7 +349,7 @@
 
         const taskTitle = task.querySelector('.task-title');
         const { workTime } = settings;
-        taskTitle.innerText = `${idleIcon$1} ${workTime}:00`;
+        taskTitle.innerText = formatTitle(idleIcon$1, workTime);
 
         return task
     };
