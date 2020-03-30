@@ -1,4 +1,5 @@
 import { changeStats, checkRequirements } from './stats'
+jest.mock('../../utils/common')
 
 const mockedStats = {
     hp: 37.03646565806994,
@@ -135,8 +136,6 @@ describe('Stat', () => {
 })
 
 describe('Checkrequirements', () => {
-    const logs = () => {}
-
     test("returns false if can't cast a spell", () => {
         const newStats = {
             hp: 37,
