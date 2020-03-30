@@ -13,11 +13,12 @@ import { settings } from '../settings'
  * @returns { CustomTimes }
  */
 const parseNotes = text => {
-    const times = Array.from(text.match(/\d{1,2}/g) || []).map(Number)
-    if (!times) {
+    const matches = text.match(/\d{1,2}/g)
+    if (!matches) {
         return null
     }
 
+    const times = Array.from(matches).map(Number)
     let workTime = 0
     let breakTime = 0
     if (times.length === 4) {
