@@ -14,46 +14,44 @@
 While using Habitica to organize myself I ended up **outleveling my friends** and wondered how I could adjust my leveling process to keep up with the party.  
 That's how this project begins. By creating new skills and **consuming experience points** , I've slow down my leveling in exchange for other resources such hp, Then I got pretty hyped to expand these customizations even further with other people contributions and transformed a single script file in this cool **custom suite**. We even have badges!
 
-## How to Use Habitica Custom Skills
+## How to install these scripts
 
 1.  Install the userscript manager **Violentmonkey** for [FireFox](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) or [Chrome](https://chrome.google.com/webstore/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag?hl=en)
-2.  [Click here](https://github.com/Markkop/habiticaCustomSkills/raw/master/dist/habiticaCustomSkills.user.js) and install the `dist/habiticaCustomSkills.user.js` userscript file
-3.  Access [Habitica](https://habitica.com/)'s home
+2.  Go to [dist](https://github.com/Markkop/habiticaScripts/tree/master/dist) folder, select a script and view it as raw by clicking in the `Raw` button
+3.  Confirm userscript instalation
+4.  Access/reload [Habitica](https://habitica.com/)'s home
+
+## Scripts
+
+### 🍅 habiticaPomodoro
+
+Transforms a task named **#pomodoro** to a Pomodoro Timer.\
+It emits a **sound** after each time interval and at the end of the last, it **scores** a good habit on Habitica.\
+Both time intervals can be customized.\
+**[Click here](https://github.com/Markkop/habiticaScripts/raw/master/dist/habiticaPomodoro.user.js) to install**
+
+<img src="https://i.imgur.com/73GEP1U.gif"/>
+
+### 🔮 habiticaCustomSkills
+
+Get new customizable **skills** for your class.\
+It's possibile to consume or reward **hp**, **mana**, **exp** and **gold**.\
+Modifiers can be **flat**, **%max**, **%current** or **random** values.\
+**[Click here](https://github.com/Markkop/habiticaScripts/raw/master/dist/habiticaCustomSkills.user.js) to install**
+
+<img src="https://i.imgur.com/HMcUVEq.png"/>
+
+### ⌨️ habiticaShortcuts
+
+Soon™️
 
 ## How to develop
 
 1.  Allow Violentmonkey to [access file urls](https://violentmonkey.github.io/posts/how-to-edit-scripts-with-your-favorite-editor/#install-a-local-script) in Chrome
-2.  Drag the file in local `dist` folder to the browser, confirm installation and keep this tab open to track changes
-3.  Run `npm install` to install dependencies
-4.  Run `npm run dev` and select `build:watch` to rebuild on file change
-5.  On another terminal run `npm run dev` and select `test:watch` to watch tests on file change
+2.  Drag the script file in local `dist` folder to the browser or run `google-chrome dist/scriptName.js`
+3.  Confirm userscript installation and keep this tab open to track changes
+4.  Run `npm install` to install dependencies
+5.  Run `npm run dev` and select `build:watch` to rebuild on file change
+6.  On another terminal run `npm run dev` and select `test:watch` to watch tests on file change
 
 Tip: Use [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) and [Formatting Toggle](https://marketplace.visualstudio.com/items?itemName=tombonnike.vscode-status-bar-format-toggle) for code formatting
-
-# Progress History
-
-<img src="https://i.imgur.com/CeCfBC1.png"/>
-<hr>
-<img src="https://i.imgur.com/Wc8WAjC.png"/>
-<hr>
-<img src="https://i.imgur.com/3QvJFgd.png"/>
-<hr>
-<img src="https://i.imgur.com/kIjk9qB.png"/>
-<hr>
-<img src="https://i.imgur.com/HMcUVEq.png"/>
-<hr>
-<img src="https://i.imgur.com/Ndh6dJ9.png"/>
-
-[(Printscreen of old testing file)](https://i.imgur.com/BLkLpcj.png)
-
-## Some references
-
--   [JavaScript and Node Testing Best Practices](https://javascriptweekly.com/link/68555/14d64d4a39)
--   [Jest Fetch Mock](https://www.npmjs.com/package/jest-fetch-mock#installation-and-setup)
--   [How to mock specific module function in jest?](https://medium.com/@qjli/how-to-mock-specific-module-function-in-jest-715e39a391f4)
--   [Things I learned after writing tests for JS and HTML page](https://dev.to/snowleo208/things-i-learned-after-writing-tests-for-js-and-html-page-4lja)
--   [BFG Repo Cleaner](https://rtyley.github.io/bfg-repo-cleaner/)
--   [Reduce unit tests boilerplate with Jest’s .each syntax](https://itnext.io/reduce-unit-tests-boilerplate-with-jests-each-syntax-f5e48828437f)
--   [Jest ignore or exclude file/function/statement from test coverage](https://codewithhugo.com/jest-exclude-coverage/)
--   [How to read Test Coverage report generated using Jest](https://medium.com/@krishankantsinghal/how-to-read-test-coverage-report-generated-using-jest-c2d1cb70da8b)
--   [How to use GitHub badges to stop feeling like a noob](https://www.freecodecamp.org/news/how-to-use-badges-to-stop-feeling-like-a-noob-d4e6600d37d2/)
