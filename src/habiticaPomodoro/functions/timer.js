@@ -27,12 +27,20 @@ export const onLeftControlClick = () => {
 }
 
 /**
- * When the right side (Stop) is clicked
+ * Resets page title to Habitica
+ */
+const resetTitle = () => {
+    document.title = 'Habitica'
+}
+
+/**
+ * When the right side (Reset) is clicked
  */
 export const onRightControlClick = () => {
     updateCustomTimes()
     isResting = false
     clock = 0
+    resetTitle()
     resetTimer()
 }
 
@@ -52,6 +60,7 @@ const tickOneSecond = () => {
         const extraText = isResting ? 'Descansando...' : 'Colhendo um pomodoro...'
         const titleIcon = isResting ? playRestingIcon : playIcon
         taskTitle.innerText = `${formatTitle(titleIcon, seconds)} - ${extraText}`
+        document.title = formatTitle(titleIcon, seconds)
 
         leftIcon.innerHTML = clocks[clock]
         const isLastClock = clock === clocks.length - 1
@@ -75,6 +84,7 @@ const tickOneSecond = () => {
             playSound('Chat')
             isResting = false
             window.scoreGoodHabit()
+            resetTitle()
             resetTimer()
         }
     }
