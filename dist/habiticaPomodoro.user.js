@@ -107,13 +107,22 @@
 
     /**
      * Update settings with custom times
+     * @returns { Boolean } has updated
      */
     const updateCustomTimes = () => {
         const customTimes = getTimesFromTaskNotes();
-        if (customTimes) {
-            settings.workTime = customTimes.workTime;
-            settings.breakTime = customTimes.breakTime;
+        if (!customTimes) {
+            return false
         }
+
+        const isSameWorkTime = settings.workTime === customTimes.workTime;
+        const isSameBreakTime = settings.breakTime === customTimes.breakTime;
+        if (isSameWorkTime && isSameBreakTime) {
+            return false
+        }
+        settings.workTime = customTimes.workTime;
+        settings.breakTime = customTimes.breakTime;
+        return true
     };
 
     /**
@@ -129,14 +138,21 @@
         if (noSounds) {
             return
         }
-
-        let audioPlayer = document.querySelector('#player');
-        if (!audioPlayer) {
-            audioPlayer = document.createElement('audio');
-            audioPlayer.id = 'player';
-        }
-        audioPlayer.src = `https://habitica.com/static/audio/danielTheBard/${sound}.ogg`;
+        const audioPlayer = document.querySelector(`#player-${sound}`);
         audioPlayer.play();
+
+    };
+
+    /**
+     * Create player element for each sound used
+     */
+    const createSoundPlayer = usedSounds => {
+        usedSounds.forEach(sound => {
+            const audioPlayer = document.createElement('audio');
+            audioPlayer.src = `https://habitica.com/static/audio/danielTheBard/${sound}.ogg`;
+            audioPlayer.id = `player-${sound}`;
+            document.body.appendChild(audioPlayer);
+        });
     };
 
     /**
@@ -196,12 +212,13 @@
     };
 
     /**
-     * When the right side (Stop) is clicked
+     * When the right side (Reset) is clicked
      */
     const onRightControlClick = () => {
         updateCustomTimes();
         isResting = false;
         clock = 0;
+        resetTitle();
         resetTimer();
     };
 
@@ -221,6 +238,7 @@
             const extraText = isResting ? 'Descansando...' : 'Colhendo um pomodoro...';
             const titleIcon = isResting ? playRestingIcon : playIcon;
             taskTitle.innerText = `${formatTitle(titleIcon, seconds)} - ${extraText}`;
+            document.title = formatTitle(titleIcon, seconds);
 
             leftIcon.innerHTML = clocks[clock];
             const isLastClock = clock === clocks.length - 1;
@@ -244,6 +262,7 @@
                 playSound('Chat');
                 isResting = false;
                 window.scoreGoodHabit();
+                resetTitle();
                 resetTimer();
             }
         }
@@ -291,6 +310,13 @@
         clearInterval(interval);
     };
 
+    /**
+     * Resets page title to Habitica
+     */
+    const resetTitle = () => {
+        document.title = 'Habitica';
+    };
+
     const { playIcon: playIcon$1, stopIcon, idleIcon: idleIcon$1 } = settings;
 
     /**
@@ -326,13 +352,22 @@
     }
 
     /**
+     * Check and update custom times on each click
+     */
+    const updateAndReset = () => {
+        const hasUpdated = updateCustomTimes();
+        if (hasUpdated) {
+            onRightControlClick();
+        }
+    };
+    /**
      * Convert task to timer
      * @param { HTMLElement } task
      * @returns { HTMLElement }
      */
     const convertTask = task => {
         task.classList.add('pomodoro-task');
-        updateCustomTimes();
+        document.body.addEventListener('click', updateAndReset);
         window.scoreGoodHabit = extractClick(task);
 
         const style =
@@ -352,6 +387,7 @@
         const { workTime } = settings;
         taskTitle.innerText = formatTitle(idleIcon$1, workTime);
 
+        updateAndReset();
         return task
     };
 
@@ -362,6 +398,7 @@
         try {
             logs('Starting habiticaPomodoro script');
             const pomodoroTask = await waitForExistance(getPomodoroTask);
+            createSoundPlayer(['Todo', 'Chat']);
             convertTask(pomodoroTask);
         } catch (error) {
             logs('Error on habiticaPomodoro.user.js', { error });

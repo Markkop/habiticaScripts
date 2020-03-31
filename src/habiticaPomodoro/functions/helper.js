@@ -48,13 +48,22 @@ const getTimesFromTaskNotes = () => {
 
 /**
  * Update settings with custom times
+ * @returns { Boolean } has updated
  */
 export const updateCustomTimes = () => {
     const customTimes = getTimesFromTaskNotes()
-    if (customTimes) {
-        settings.workTime = customTimes.workTime
-        settings.breakTime = customTimes.breakTime
+    if (!customTimes) {
+        return false
     }
+
+    const isSameWorkTime = settings.workTime === customTimes.workTime
+    const isSameBreakTime = settings.breakTime === customTimes.breakTime
+    if (isSameWorkTime && isSameBreakTime) {
+        return false
+    }
+    settings.workTime = customTimes.workTime
+    settings.breakTime = customTimes.breakTime
+    return true
 }
 
 /**
