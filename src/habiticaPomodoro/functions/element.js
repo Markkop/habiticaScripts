@@ -37,13 +37,22 @@ export function extractClick(pomodoroTask) {
 }
 
 /**
+ * Check and update custom times on each click
+ */
+const updateAndReset = () => {
+    const hasUpdated = updateCustomTimes()
+    if (hasUpdated) {
+        onRightControlClick()
+    }
+}
+/**
  * Convert task to timer
  * @param { HTMLElement } task
  * @returns { HTMLElement }
  */
 export const convertTask = task => {
     task.classList.add('pomodoro-task')
-    updateCustomTimes()
+    document.body.addEventListener('click', updateAndReset)
     window.scoreGoodHabit = extractClick(task)
 
     const style =
@@ -63,5 +72,6 @@ export const convertTask = task => {
     const { workTime } = settings
     taskTitle.innerText = formatTitle(idleIcon, workTime)
 
+    updateAndReset()
     return task
 }

@@ -48,13 +48,22 @@ const getTimesFromTaskNotes = () => {
 
 /**
  * Update settings with custom times
+ * @returns { Boolean } has updated
  */
 export const updateCustomTimes = () => {
     const customTimes = getTimesFromTaskNotes()
-    if (customTimes) {
-        settings.workTime = customTimes.workTime
-        settings.breakTime = customTimes.breakTime
+    if (!customTimes) {
+        return false
     }
+
+    const isSameWorkTime = settings.workTime === customTimes.workTime
+    const isSameBreakTime = settings.breakTime === customTimes.breakTime
+    if (isSameWorkTime && isSameBreakTime) {
+        return false
+    }
+    settings.workTime = customTimes.workTime
+    settings.breakTime = customTimes.breakTime
+    return true
 }
 
 /**
@@ -70,14 +79,20 @@ export const playSound = sound => {
     if (noSounds) {
         return
     }
-
-    let audioPlayer = document.querySelector('#player')
-    if (!audioPlayer) {
-        audioPlayer = document.createElement('audio')
-        audioPlayer.id = 'player'
-    }
-    audioPlayer.src = `https://habitica.com/static/audio/danielTheBard/${sound}.ogg`
+    const audioPlayer = document.querySelector(`#player-${sound}`)
     audioPlayer.play()
+}
+
+/**
+ * Create player element for each sound used
+ */
+export const createSoundPlayer = usedSounds => {
+    usedSounds.forEach(sound => {
+        const audioPlayer = document.createElement('audio')
+        audioPlayer.src = `https://habitica.com/static/audio/danielTheBard/${sound}.ogg`
+        audioPlayer.id = `player-${sound}`
+        document.body.appendChild(audioPlayer)
+    })
 }
 
 /**
