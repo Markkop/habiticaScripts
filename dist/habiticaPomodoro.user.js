@@ -1,10 +1,11 @@
 // ==UserScript== 
 // @name        habiticaPomodoro 
-// @version     1.0.0 
+// @version     1.1.0 
 // @description Creates a timer on a pomodoro task 
 // @include     http*://habitica.com* 
-// @run-at 	    document-idle 
+// @run-at 	 document-idle 
 // @author      Marcelo 'Mark' Kopmann 
+// @downloadURL https://raw.githubusercontent.com/Markkop/habiticaScripts/master/dist/habiticaPomodoro.user.js 
 // ==/UserScript== 
 
 (function () {
@@ -140,7 +141,6 @@
         }
         const audioPlayer = document.querySelector(`#player-${sound}`);
         audioPlayer.play();
-
     };
 
     /**
@@ -209,6 +209,13 @@
         } else {
             togglePaused();
         }
+    };
+
+    /**
+     * Resets page title to Habitica
+     */
+    const resetTitle = () => {
+        document.title = 'Habitica';
     };
 
     /**
@@ -308,13 +315,6 @@
         seconds = time;
 
         clearInterval(interval);
-    };
-
-    /**
-     * Resets page title to Habitica
-     */
-    const resetTitle = () => {
-        document.title = 'Habitica';
     };
 
     const { playIcon: playIcon$1, stopIcon, idleIcon: idleIcon$1 } = settings;
