@@ -157,6 +157,7 @@
     const style = `
 
 `;
+    d;
 
     // import { shortcutsTree } from './shortcuts'
     // import { createSpell, getSpellCard } from './functions/element'
